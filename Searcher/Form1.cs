@@ -7,14 +7,16 @@ public partial class Form1 : Form
 	public Form1()
 	{
 		InitializeComponent();
-		RestoreStartFolder();
+		RestoreSettings();
 	}
 
-	private void RestoreStartFolder()
+	private void RestoreSettings()
 	{
 		string saved = Settings.Default.StartFolder;
 		RootFolder.Text = saved;
 		StartFolder = new DirectoryInfo(saved);
+		FilenameFilter.Text = Settings.Default.FileFilter;
+		Prompt.Text = Settings.Default.SearchString;
 	}
 
 	private async void Prompt_DoSearch(object sender, EventArgs e)
@@ -36,6 +38,8 @@ public partial class Form1 : Form
 			ShowInvalidDirectoryAlert();
 			yield break;
 		}
+
+		SaveSettings();
 
 		foreach (var file in StartFolder.EnumerateFiles("Prompts.txt",
 			new EnumerationOptions
@@ -138,13 +142,15 @@ public partial class Form1 : Form
 			"Directory Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
 	}
 
-	private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+	/// <summary>
+	/// Persist field values between user sessions. Run upon a successful search.
+	/// </summary>
+	private void SaveSettings()
 	{
-		if (RootFolder.Text != "" && Directory.Exists(RootFolder.Text))
-		{
-			Settings.Default.StartFolder = RootFolder.Text;
-			Settings.Default.Save();
-		}
+		Settings.Default.StartFolder = RootFolder.Text;
+		Settings.Default.SearchString = Prompt.Text;
+		Settings.Default.FileFilter = FilenameFilter.Text;
+		Settings.Default.Save();
 	}
 
 	private void RootFolder_TextChanged(object sender, EventArgs e)

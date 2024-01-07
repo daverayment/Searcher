@@ -32,7 +32,7 @@
 			statusStrip1 = new StatusStrip();
 			Status = new ToolStripStatusLabel();
 			splitContainer1 = new SplitContainer();
-			SearchFilenames = new TextBox();
+			FilenameFilter = new TextBox();
 			label5 = new Label();
 			Browse = new Button();
 			RootFolder = new TextBox();
@@ -76,7 +76,7 @@
 			// 
 			// splitContainer1.Panel1
 			// 
-			splitContainer1.Panel1.Controls.Add(SearchFilenames);
+			splitContainer1.Panel1.Controls.Add(FilenameFilter);
 			splitContainer1.Panel1.Controls.Add(label5);
 			splitContainer1.Panel1.Controls.Add(Browse);
 			splitContainer1.Panel1.Controls.Add(RootFolder);
@@ -95,14 +95,14 @@
 			splitContainer1.SplitterDistance = 449;
 			splitContainer1.TabIndex = 7;
 			// 
-			// SearchFilenames
+			// FilenameFilter
 			// 
-			SearchFilenames.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			SearchFilenames.Location = new Point(12, 103);
-			SearchFilenames.Name = "SearchFilenames";
-			SearchFilenames.PlaceholderText = "E.g. \"*.txt\"";
-			SearchFilenames.Size = new Size(341, 27);
-			SearchFilenames.TabIndex = 9;
+			FilenameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			FilenameFilter.Location = new Point(12, 103);
+			FilenameFilter.Name = "FilenameFilter";
+			FilenameFilter.PlaceholderText = "E.g. \"*.txt\"";
+			FilenameFilter.Size = new Size(341, 27);
+			FilenameFilter.TabIndex = 9;
 			// 
 			// label5
 			// 
@@ -232,7 +232,6 @@
 			Controls.Add(statusStrip1);
 			Name = "Form1";
 			Text = "Searcher";
-			FormClosing += Form1_FormClosing;
 			statusStrip1.ResumeLayout(false);
 			statusStrip1.PerformLayout();
 			splitContainer1.Panel1.ResumeLayout(false);
@@ -259,7 +258,7 @@
 		private Button Browse;
 		private TextBox RootFolder;
 		private Label label4;
-		private TextBox SearchFilenames;
+		private TextBox FilenameFilter;
 		private Label label5;
 		private FolderBrowserDialog FolderBrowser;
 		private ToolTip toolTip1;

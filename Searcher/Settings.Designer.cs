@@ -34,5 +34,29 @@ namespace Searcher {
                 this["StartFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FileFilter {
+            get {
+                return ((string)(this["FileFilter"]));
+            }
+            set {
+                this["FileFilter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SearchString {
+            get {
+                return ((string)(this["SearchString"]));
+            }
+            set {
+                this["SearchString"] = value;
+            }
+        }
     }
 }
