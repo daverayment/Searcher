@@ -1,24 +1,28 @@
+using System.Text.RegularExpressions;
+
 namespace Searcher;
 
 public partial class Form1 : Form
 {
-	private DirectoryInfo? StartFolder;
-
 	public Form1()
 	{
 		InitializeComponent();
 		RestoreSettings();
 	}
 
+	/// <summary>
+	/// Restore field values from previous session (or defaults if this is first run).
+	/// </summary>
 	private void RestoreSettings()
 	{
-		string saved = Settings.Default.StartFolder;
-		RootFolder.Text = saved;
-		StartFolder = new DirectoryInfo(saved);
+		StartFolder.Text = Settings.Default.StartFolder;
 		FilenameFilter.Text = Settings.Default.FileFilter;
 		Prompt.Text = Settings.Default.SearchString;
 	}
 
+	/// <summary>
+	/// Execute the search and update the results as matches are found.
+	/// </summary>
 	private async void Prompt_DoSearch(object sender, EventArgs e)
 	{
 		Results.Items.Clear();
@@ -31,9 +35,13 @@ public partial class Form1 : Form
 		Status.Text = $"Finished search. Found {Results.Items.Count} file matches.";
 	}
 
-	private async IAsyncEnumerable<FileInfo> SearchFilesForPrompt(string prompt)
+	/// <summary>
+	/// Execute the search. Yields <see cref="FileInfo"/>s for files which
+	/// match the filename pattern and which contain the search text.
+	/// </summary>
+	private async IAsyncEnumerable<FileInfo> SearchFilesForPrompt(string searchText)
 	{
-		if (StartFolder == null || !Directory.Exists(StartFolder.FullName))
+		if (StartFolder.Text == "" || !Directory.Exists(StartFolder.Text))
 		{
 			ShowInvalidDirectoryAlert();
 			yield break;
@@ -42,28 +50,46 @@ public partial class Form1 : Form
 		SaveSettings();
 		FileContents.Clear();
 
-		string pattern = FilenameFilter.Text.Trim();
-		pattern = pattern.Length == 0 ? "*" : pattern;
+		Regex pattern = CreateFilenameRegex();
+		var startDirInfo = new DirectoryInfo(StartFolder.Text);
 
-		foreach (var file in StartFolder.EnumerateFiles(pattern,
-			new EnumerationOptions
+		foreach (var file in startDirInfo.EnumerateFiles("*", new EnumerationOptions
 			{
 				IgnoreInaccessible = true,
 				RecurseSubdirectories = true,
 				AttributesToSkip = FileAttributes.ReparsePoint
-			}))
+			})
+		)
 		{
-			Status.Text = $"Searching {file.FullName}.";
-
-			string contents = await File.ReadAllTextAsync(file.FullName);
-
-			if (contents.Contains(prompt, StringComparison.OrdinalIgnoreCase))
+			if (pattern.IsMatch(file.Name))
 			{
-				yield return file;
+				Status.Text = $"Searching {file.FullName}.";
+
+				string contents = await File.ReadAllTextAsync(file.FullName);
+
+				if (contents.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+				{
+					yield return file;
+				}
 			}
 		}
 	}
 
+	/// <summary>
+	/// Convert the user-supplied filename filter text into a regular expression
+	/// for matching against each of the filenames enumerated.
+	/// </summary>
+	/// <returns>The compiled <see cref="Regex"/> pattern for matching filenames.
+	/// </returns>
+	private Regex CreateFilenameRegex() =>
+		new (string.Join("|",
+			FilenameFilter.Text.Split(",").Select(filter =>
+				"^" + Regex.Escape(filter.Trim()).Replace("\\*", ".*").Replace("\\?", ".") + "$")),
+			RegexOptions.Compiled);
+
+	/// <summary>
+	/// Open a new Explorer window when a result is double-clicked.
+	/// </summary>
 	private void Results_DoubleClick(object sender, EventArgs e)
 	{
 		int index = Results.IndexFromPoint(((MouseEventArgs)e).Location);
@@ -78,6 +104,9 @@ public partial class Form1 : Form
 		}
 	}
 
+	/// <summary>
+	/// Update the contents view when a result is selected.
+	/// </summary>
 	private void Results_SelectedIndexChanged(object sender, EventArgs e)
 	{
 		if (Results.SelectedIndex < 0) return;
@@ -117,32 +146,31 @@ public partial class Form1 : Form
 		}
 	}
 
+	/// <summary>
+	/// Let the user browse for a new start folder.
+	/// </summary>
 	private void Browse_Click(object sender, EventArgs e)
 	{
 		if (FolderBrowser.ShowDialog() == DialogResult.OK)
 		{
-			UpdateStartFolder(FolderBrowser.SelectedPath);
+			string selectedPath = FolderBrowser.SelectedPath;
+			if (Directory.Exists(selectedPath))
+			{
+				StartFolder.Text = selectedPath;
+			}
+			else
+			{
+				ShowInvalidDirectoryAlert();
+			}
 		}
 	}
 
-	private void UpdateStartFolder(string selectedPath)
-	{
-		if (Directory.Exists(selectedPath))
-		{
-			RootFolder.Text = selectedPath;
-			StartFolder = new DirectoryInfo(selectedPath);
-		}
-		else
-		{
-			ShowInvalidDirectoryAlert();
-		}
-	}
-
+	/// <summary>
+	/// Show directory not found alert.
+	/// </summary>
 	private void ShowInvalidDirectoryAlert()
 	{
-		string folder = StartFolder?.FullName ?? string.Empty;
-		folder = folder.Length > 0 ? " " : folder;
-		MessageBox.Show(this, $"Directory \"{folder}\"not found.",
+		MessageBox.Show(this, $"Directory \"{StartFolder.Text}\"not found.",
 			"Directory Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
 	}
 
@@ -151,7 +179,7 @@ public partial class Form1 : Form
 	/// </summary>
 	private void SaveSettings()
 	{
-		Settings.Default.StartFolder = RootFolder.Text;
+		Settings.Default.StartFolder = StartFolder.Text;
 		Settings.Default.SearchString = Prompt.Text;
 		Settings.Default.FileFilter = FilenameFilter.Text;
 		Settings.Default.Save();
@@ -167,21 +195,27 @@ public partial class Form1 : Form
 		UpdateSearchButton();
 	}
 
+	/// <summary>
+	/// Only enable the Seach button when both a start folder and search text
+	/// are valid.
+	/// </summary>
 	private void UpdateSearchButton()
 	{
-		Search.Enabled = RootFolder.Text.Trim().Length > 0 &&
+		Search.Enabled = StartFolder.Text.Trim().Length > 0 &&
 			Prompt.Text.Trim().Length > 0 &&
-			StartFolder != null &&
-			Directory.Exists(StartFolder.FullName);
+			Directory.Exists(StartFolder.Text);
 		Status.Text = Search.Enabled ? "Ready to search." : "";
 	}
 
-	private void RootFolder_Leave(object sender, EventArgs e)
+	/// <summary>
+	/// Check directory exists when the start folder field has been edited.
+	/// </summary>
+	private void StartFolder_Leave(object sender, EventArgs e)
 	{
 		UpdateSearchButton();
-		if (!Directory.Exists(RootFolder.Text))
+		if (!Directory.Exists(StartFolder.Text))
 		{
-			Status.Text = $"\"{RootFolder.Text}\" doesn't exist.";
+			Status.Text = $"\"{StartFolder.Text}\" doesn't exist.";
 		}
 	}
 }

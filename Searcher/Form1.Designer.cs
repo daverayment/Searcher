@@ -35,7 +35,7 @@
 			FilenameFilter = new TextBox();
 			label5 = new Label();
 			Browse = new Button();
-			RootFolder = new TextBox();
+			StartFolder = new TextBox();
 			label4 = new Label();
 			Search = new Button();
 			Results = new ListBox();
@@ -79,7 +79,7 @@
 			splitContainer1.Panel1.Controls.Add(FilenameFilter);
 			splitContainer1.Panel1.Controls.Add(label5);
 			splitContainer1.Panel1.Controls.Add(Browse);
-			splitContainer1.Panel1.Controls.Add(RootFolder);
+			splitContainer1.Panel1.Controls.Add(StartFolder);
 			splitContainer1.Panel1.Controls.Add(label4);
 			splitContainer1.Panel1.Controls.Add(Search);
 			splitContainer1.Panel1.Controls.Add(Results);
@@ -125,14 +125,14 @@
 			Browse.UseVisualStyleBackColor = true;
 			Browse.Click += Browse_Click;
 			// 
-			// RootFolder
+			// StartFolder
 			// 
-			RootFolder.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			RootFolder.Location = new Point(12, 32);
-			RootFolder.Name = "RootFolder";
-			RootFolder.Size = new Size(341, 27);
-			RootFolder.TabIndex = 6;
-			RootFolder.Leave += RootFolder_Leave;
+			StartFolder.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			StartFolder.Location = new Point(12, 32);
+			StartFolder.Name = "StartFolder";
+			StartFolder.Size = new Size(341, 27);
+			StartFolder.TabIndex = 6;
+			StartFolder.Leave += StartFolder_Leave;
 			// 
 			// label4
 			// 
@@ -256,7 +256,7 @@
 		private Label label3;
 		private Button Search;
 		private Button Browse;
-		private TextBox RootFolder;
+		private TextBox StartFolder;
 		private Label label4;
 		private TextBox FilenameFilter;
 		private Label label5;
