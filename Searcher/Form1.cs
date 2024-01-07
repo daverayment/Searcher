@@ -40,8 +40,12 @@ public partial class Form1 : Form
 		}
 
 		SaveSettings();
+		FileContents.Clear();
 
-		foreach (var file in StartFolder.EnumerateFiles("Prompts.txt",
+		string pattern = FilenameFilter.Text.Trim();
+		pattern = pattern.Length == 0 ? "*" : pattern;
+
+		foreach (var file in StartFolder.EnumerateFiles(pattern,
 			new EnumerationOptions
 			{
 				IgnoreInaccessible = true,
