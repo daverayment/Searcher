@@ -33,9 +33,7 @@ public partial class Form1 : Form
 	{
 		if (StartFolder == null || !Directory.Exists(StartFolder.FullName))
 		{
-			string folder = StartFolder?.FullName ?? "";
-			MessageBox.Show(this, $"Directory \"{folder}\" not found.",
-				"Invalid Start Folder", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			ShowInvalidDirectoryAlert();
 			yield break;
 		}
 
@@ -128,9 +126,16 @@ public partial class Form1 : Form
 		}
 		else
 		{
-			MessageBox.Show(this, "Directory doesn't exist.",
-				"Invalid Directory", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			ShowInvalidDirectoryAlert();
 		}
+	}
+
+	private void ShowInvalidDirectoryAlert()
+	{
+		string folder = StartFolder?.FullName ?? string.Empty;
+		folder = folder.Length > 0 ? " " : folder;
+		MessageBox.Show(this, $"Directory \"{folder}\"not found.",
+			"Directory Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
 	}
 
 	private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -139,6 +144,34 @@ public partial class Form1 : Form
 		{
 			Settings.Default.StartFolder = RootFolder.Text;
 			Settings.Default.Save();
+		}
+	}
+
+	private void RootFolder_TextChanged(object sender, EventArgs e)
+	{
+		UpdateSearchButton();
+	}
+
+	private void Prompt_TextChanged(object sender, EventArgs e)
+	{
+		UpdateSearchButton();
+	}
+
+	private void UpdateSearchButton()
+	{
+		Search.Enabled = RootFolder.Text.Trim().Length > 0 &&
+			Prompt.Text.Trim().Length > 0 &&
+			StartFolder != null &&
+			Directory.Exists(StartFolder.FullName);
+		Status.Text = Search.Enabled ? "Ready to search." : "";
+	}
+
+	private void RootFolder_Leave(object sender, EventArgs e)
+	{
+		UpdateSearchButton();
+		if (!Directory.Exists(RootFolder.Text))
+		{
+			Status.Text = $"\"{RootFolder.Text}\" doesn't exist.";
 		}
 	}
 }

@@ -132,6 +132,7 @@
 			RootFolder.Name = "RootFolder";
 			RootFolder.Size = new Size(341, 27);
 			RootFolder.TabIndex = 6;
+			RootFolder.Leave += RootFolder_Leave;
 			// 
 			// label4
 			// 
@@ -197,6 +198,7 @@
 			Prompt.PlaceholderText = "Enter your search string";
 			Prompt.Size = new Size(429, 84);
 			Prompt.TabIndex = 1;
+			Prompt.TextChanged += Prompt_TextChanged;
 			// 
 			// FileContents
 			// 
@@ -229,7 +231,7 @@
 			Controls.Add(splitContainer1);
 			Controls.Add(statusStrip1);
 			Name = "Form1";
-			Text = "String Searcher";
+			Text = "Searcher";
 			FormClosing += Form1_FormClosing;
 			statusStrip1.ResumeLayout(false);
 			statusStrip1.PerformLayout();
