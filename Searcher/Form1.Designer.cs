@@ -32,17 +32,17 @@
 			statusStrip1 = new StatusStrip();
 			Status = new ToolStripStatusLabel();
 			splitContainer1 = new SplitContainer();
-			FilenameFilter = new TextBox();
+			filenameFilterTextBox = new TextBox();
 			label5 = new Label();
-			Browse = new Button();
-			StartFolder = new TextBox();
+			browseButton = new Button();
+			startFolderTextBox = new TextBox();
 			label4 = new Label();
-			Search = new Button();
-			Results = new ListBox();
+			searchCancelButton = new Button();
+			resultsListBox = new ListBox();
 			label2 = new Label();
 			label1 = new Label();
-			Prompt = new TextBox();
-			FileContents = new RichTextBox();
+			searchStringTextBox = new TextBox();
+			fileContentsRichTextBox = new RichTextBox();
 			label3 = new Label();
 			FolderBrowser = new FolderBrowserDialog();
 			toolTip1 = new ToolTip(components);
@@ -76,33 +76,33 @@
 			// 
 			// splitContainer1.Panel1
 			// 
-			splitContainer1.Panel1.Controls.Add(FilenameFilter);
+			splitContainer1.Panel1.Controls.Add(filenameFilterTextBox);
 			splitContainer1.Panel1.Controls.Add(label5);
-			splitContainer1.Panel1.Controls.Add(Browse);
-			splitContainer1.Panel1.Controls.Add(StartFolder);
+			splitContainer1.Panel1.Controls.Add(browseButton);
+			splitContainer1.Panel1.Controls.Add(startFolderTextBox);
 			splitContainer1.Panel1.Controls.Add(label4);
-			splitContainer1.Panel1.Controls.Add(Search);
-			splitContainer1.Panel1.Controls.Add(Results);
+			splitContainer1.Panel1.Controls.Add(searchCancelButton);
+			splitContainer1.Panel1.Controls.Add(resultsListBox);
 			splitContainer1.Panel1.Controls.Add(label2);
 			splitContainer1.Panel1.Controls.Add(label1);
-			splitContainer1.Panel1.Controls.Add(Prompt);
+			splitContainer1.Panel1.Controls.Add(searchStringTextBox);
 			// 
 			// splitContainer1.Panel2
 			// 
-			splitContainer1.Panel2.Controls.Add(FileContents);
+			splitContainer1.Panel2.Controls.Add(fileContentsRichTextBox);
 			splitContainer1.Panel2.Controls.Add(label3);
 			splitContainer1.Size = new Size(1351, 613);
 			splitContainer1.SplitterDistance = 449;
 			splitContainer1.TabIndex = 7;
 			// 
-			// FilenameFilter
+			// filenameFilterTextBox
 			// 
-			FilenameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			FilenameFilter.Location = new Point(12, 103);
-			FilenameFilter.Name = "FilenameFilter";
-			FilenameFilter.PlaceholderText = "E.g. \"*.txt\"";
-			FilenameFilter.Size = new Size(341, 27);
-			FilenameFilter.TabIndex = 9;
+			filenameFilterTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			filenameFilterTextBox.Location = new Point(12, 103);
+			filenameFilterTextBox.Name = "filenameFilterTextBox";
+			filenameFilterTextBox.PlaceholderText = "E.g. \"*.txt\"";
+			filenameFilterTextBox.Size = new Size(341, 27);
+			filenameFilterTextBox.TabIndex = 9;
 			// 
 			// label5
 			// 
@@ -113,26 +113,26 @@
 			label5.TabIndex = 8;
 			label5.Text = "Filename filter (leave blank to search all)";
 			// 
-			// Browse
+			// browseButton
 			// 
-			Browse.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			Browse.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-			Browse.Location = new Point(359, 29);
-			Browse.Name = "Browse";
-			Browse.Size = new Size(82, 33);
-			Browse.TabIndex = 7;
-			Browse.Text = "Browse...";
-			Browse.UseVisualStyleBackColor = true;
-			Browse.Click += Browse_Click;
+			browseButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			browseButton.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+			browseButton.Location = new Point(359, 29);
+			browseButton.Name = "browseButton";
+			browseButton.Size = new Size(82, 33);
+			browseButton.TabIndex = 7;
+			browseButton.Text = "Browse...";
+			browseButton.UseVisualStyleBackColor = true;
+			browseButton.Click += BrowseButton_Click;
 			// 
-			// StartFolder
+			// startFolderTextBox
 			// 
-			StartFolder.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			StartFolder.Location = new Point(12, 32);
-			StartFolder.Name = "StartFolder";
-			StartFolder.Size = new Size(341, 27);
-			StartFolder.TabIndex = 6;
-			StartFolder.Leave += StartFolder_Leave;
+			startFolderTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			startFolderTextBox.Location = new Point(12, 32);
+			startFolderTextBox.Name = "startFolderTextBox";
+			startFolderTextBox.Size = new Size(341, 27);
+			startFolderTextBox.TabIndex = 6;
+			startFolderTextBox.Leave += StartFolderTextBox_Leave;
 			// 
 			// label4
 			// 
@@ -143,30 +143,30 @@
 			label4.TabIndex = 5;
 			label4.Text = "Start folder";
 			// 
-			// Search
+			// searchCancelButton
 			// 
-			Search.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			Search.Font = new Font("Segoe UI", 9F);
-			Search.Location = new Point(338, 265);
-			Search.Name = "Search";
-			Search.Size = new Size(103, 33);
-			Search.TabIndex = 2;
-			Search.Text = "Search";
-			Search.UseVisualStyleBackColor = true;
-			Search.Click += Prompt_DoSearch;
+			searchCancelButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			searchCancelButton.Font = new Font("Segoe UI", 9F);
+			searchCancelButton.Location = new Point(338, 265);
+			searchCancelButton.Name = "searchCancelButton";
+			searchCancelButton.Size = new Size(103, 33);
+			searchCancelButton.TabIndex = 2;
+			searchCancelButton.Text = "Search";
+			searchCancelButton.UseVisualStyleBackColor = true;
+			searchCancelButton.Click += SearchCancelButton_Click;
 			// 
-			// Results
+			// resultsListBox
 			// 
-			Results.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			Results.DisplayMember = "DirectoryName";
-			Results.Font = new Font("Segoe UI", 9F);
-			Results.FormattingEnabled = true;
-			Results.Location = new Point(12, 335);
-			Results.Name = "Results";
-			Results.Size = new Size(429, 264);
-			Results.TabIndex = 4;
-			Results.SelectedIndexChanged += Results_SelectedIndexChanged;
-			Results.DoubleClick += Results_DoubleClick;
+			resultsListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			resultsListBox.DisplayMember = "DirectoryName";
+			resultsListBox.Font = new Font("Segoe UI", 9F);
+			resultsListBox.FormattingEnabled = true;
+			resultsListBox.Location = new Point(12, 335);
+			resultsListBox.Name = "resultsListBox";
+			resultsListBox.Size = new Size(429, 264);
+			resultsListBox.TabIndex = 4;
+			resultsListBox.SelectedIndexChanged += ResultsListBox_SelectedIndexChanged;
+			resultsListBox.DoubleClick += ResultsListBox_DoubleClick;
 			// 
 			// label2
 			// 
@@ -188,26 +188,26 @@
 			label1.TabIndex = 0;
 			label1.Text = "Search text";
 			// 
-			// Prompt
+			// searchStringTextBox
 			// 
-			Prompt.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			Prompt.Font = new Font("Segoe UI", 9F);
-			Prompt.Location = new Point(12, 175);
-			Prompt.Multiline = true;
-			Prompt.Name = "Prompt";
-			Prompt.PlaceholderText = "Enter your search string";
-			Prompt.Size = new Size(429, 84);
-			Prompt.TabIndex = 1;
-			Prompt.TextChanged += Prompt_TextChanged;
+			searchStringTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			searchStringTextBox.Font = new Font("Segoe UI", 9F);
+			searchStringTextBox.Location = new Point(12, 175);
+			searchStringTextBox.Multiline = true;
+			searchStringTextBox.Name = "searchStringTextBox";
+			searchStringTextBox.PlaceholderText = "Enter your search string";
+			searchStringTextBox.Size = new Size(429, 84);
+			searchStringTextBox.TabIndex = 1;
+			searchStringTextBox.TextChanged += SearchStringTextBox_TextChanged;
 			// 
-			// FileContents
+			// fileContentsRichTextBox
 			// 
-			FileContents.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			FileContents.Location = new Point(3, 32);
-			FileContents.Name = "FileContents";
-			FileContents.Size = new Size(883, 571);
-			FileContents.TabIndex = 1;
-			FileContents.Text = "";
+			fileContentsRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			fileContentsRichTextBox.Location = new Point(3, 32);
+			fileContentsRichTextBox.Name = "fileContentsRichTextBox";
+			fileContentsRichTextBox.Size = new Size(883, 573);
+			fileContentsRichTextBox.TabIndex = 1;
+			fileContentsRichTextBox.Text = "";
 			// 
 			// label3
 			// 
@@ -248,17 +248,17 @@
 		private StatusStrip statusStrip1;
 		private ToolStripStatusLabel Status;
 		private SplitContainer splitContainer1;
-		private ListBox Results;
+		private ListBox resultsListBox;
 		private Label label2;
 		private Label label1;
-		private TextBox Prompt;
-		private RichTextBox FileContents;
+		private TextBox searchStringTextBox;
+		private RichTextBox fileContentsRichTextBox;
 		private Label label3;
-		private Button Search;
-		private Button Browse;
-		private TextBox StartFolder;
+		private Button searchCancelButton;
+		private Button browseButton;
+		private TextBox startFolderTextBox;
 		private Label label4;
-		private TextBox FilenameFilter;
+		private TextBox filenameFilterTextBox;
 		private Label label5;
 		private FolderBrowserDialog FolderBrowser;
 		private ToolTip toolTip1;
