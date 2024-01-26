@@ -57,9 +57,9 @@
 			// 
 			statusStrip1.ImageScalingSize = new Size(20, 20);
 			statusStrip1.Items.AddRange(new ToolStripItem[] { Status });
-			statusStrip1.Location = new Point(0, 613);
+			statusStrip1.Location = new Point(0, 571);
 			statusStrip1.Name = "statusStrip1";
-			statusStrip1.Size = new Size(1351, 22);
+			statusStrip1.Size = new Size(1242, 22);
 			statusStrip1.TabIndex = 0;
 			statusStrip1.Text = "statusStrip1";
 			// 
@@ -87,13 +87,16 @@
 			splitContainer1.Panel1.Controls.Add(label1);
 			splitContainer1.Panel1.Controls.Add(searchStringTextBox);
 			splitContainer1.Panel1.Resize += SplitContainer1_Panel1_Resize;
+			splitContainer1.Panel1MinSize = 200;
 			// 
 			// splitContainer1.Panel2
 			// 
 			splitContainer1.Panel2.Controls.Add(fileContentsRichTextBox);
 			splitContainer1.Panel2.Controls.Add(label3);
-			splitContainer1.Size = new Size(1351, 613);
-			splitContainer1.SplitterDistance = 449;
+			splitContainer1.Panel2MinSize = 100;
+			splitContainer1.Size = new Size(1242, 571);
+			splitContainer1.SplitterDistance = 400;
+			splitContainer1.SplitterWidth = 6;
 			splitContainer1.TabIndex = 0;
 			// 
 			// resultsListBox
@@ -104,7 +107,7 @@
 			resultsListBox.FormattingEnabled = true;
 			resultsListBox.Location = new Point(12, 335);
 			resultsListBox.Name = "resultsListBox";
-			resultsListBox.Size = new Size(429, 264);
+			resultsListBox.Size = new Size(380, 204);
 			resultsListBox.TabIndex = 10;
 			resultsListBox.SelectedIndexChanged += ResultsListBox_SelectedIndexChanged;
 			resultsListBox.DoubleClick += ResultsListBox_DoubleClick;
@@ -115,7 +118,7 @@
 			filenameFilterTextBox.Location = new Point(12, 103);
 			filenameFilterTextBox.Name = "filenameFilterTextBox";
 			filenameFilterTextBox.PlaceholderText = "E.g. \"*.txt\"";
-			filenameFilterTextBox.Size = new Size(341, 27);
+			filenameFilterTextBox.Size = new Size(292, 27);
 			filenameFilterTextBox.TabIndex = 4;
 			// 
 			// label5
@@ -131,7 +134,7 @@
 			// 
 			browseButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			browseButton.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-			browseButton.Location = new Point(359, 29);
+			browseButton.Location = new Point(310, 29);
 			browseButton.Name = "browseButton";
 			browseButton.Size = new Size(82, 33);
 			browseButton.TabIndex = 2;
@@ -144,7 +147,7 @@
 			startFolderTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			startFolderTextBox.Location = new Point(12, 32);
 			startFolderTextBox.Name = "startFolderTextBox";
-			startFolderTextBox.Size = new Size(341, 27);
+			startFolderTextBox.Size = new Size(292, 27);
 			startFolderTextBox.TabIndex = 1;
 			startFolderTextBox.Leave += StartFolderTextBox_Leave;
 			// 
@@ -161,7 +164,7 @@
 			// 
 			searchCancelButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			searchCancelButton.Font = new Font("Segoe UI", 9F);
-			searchCancelButton.Location = new Point(338, 265);
+			searchCancelButton.Location = new Point(289, 265);
 			searchCancelButton.Name = "searchCancelButton";
 			searchCancelButton.Size = new Size(103, 33);
 			searchCancelButton.TabIndex = 7;
@@ -197,7 +200,7 @@
 			searchStringTextBox.Multiline = true;
 			searchStringTextBox.Name = "searchStringTextBox";
 			searchStringTextBox.PlaceholderText = "Enter your search string";
-			searchStringTextBox.Size = new Size(429, 84);
+			searchStringTextBox.Size = new Size(380, 84);
 			searchStringTextBox.TabIndex = 6;
 			searchStringTextBox.TextChanged += SearchStringTextBox_TextChanged;
 			// 
@@ -206,7 +209,7 @@
 			fileContentsRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			fileContentsRichTextBox.Location = new Point(3, 32);
 			fileContentsRichTextBox.Name = "fileContentsRichTextBox";
-			fileContentsRichTextBox.Size = new Size(883, 573);
+			fileContentsRichTextBox.Size = new Size(819, 531);
 			fileContentsRichTextBox.TabIndex = 1;
 			fileContentsRichTextBox.Text = "";
 			// 
@@ -228,11 +231,14 @@
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(1351, 635);
+			ClientSize = new Size(1242, 593);
 			Controls.Add(splitContainer1);
 			Controls.Add(statusStrip1);
+			MinimumSize = new Size(640, 480);
 			Name = "Form1";
 			Text = "Searcher";
+			FormClosing += Form1_FormClosing;
+			Load += Form1_Load;
 			statusStrip1.ResumeLayout(false);
 			statusStrip1.PerformLayout();
 			splitContainer1.Panel1.ResumeLayout(false);

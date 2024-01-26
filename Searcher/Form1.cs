@@ -284,6 +284,14 @@ public partial class Form1 : Form
 		Settings.Default.Save();
 	}
 
+	private void SaveFormState()
+	{
+		Settings.Default.FormSize = this.Size;
+		Settings.Default.SplitterDistance =
+			this.splitContainer1.SplitterDistance;
+		Settings.Default.Save();
+	}
+
 	private void SearchStringTextBox_TextChanged(object sender, EventArgs e)
 	{
 		UpdateSearchButton();
@@ -318,6 +326,28 @@ public partial class Form1 : Form
 		if (sender is SplitterPanel)
 		{
 			resultsListBox.Refresh();
+		}
+	}
+
+	private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+	{
+		SaveFormState();
+	}
+
+	private void Form1_Load(object sender, EventArgs e)
+	{
+		if (Settings.Default.FormSize != Size.Empty &&
+			Settings.Default.FormSize.Width >= this.MinimumSize.Width &&
+			Settings.Default.FormSize.Height >= this.MinimumSize.Height)
+		{
+			this.Size = Settings.Default.FormSize;
+		}
+
+		int splitterDistance = Settings.Default.SplitterDistance;
+		if (splitterDistance >= splitContainer1.Panel1MinSize &&
+			splitterDistance < splitContainer1.Width - splitContainer1.Panel2MinSize)
+		{
+			this.splitContainer1.SplitterDistance = splitterDistance;
 		}
 	}
 }
