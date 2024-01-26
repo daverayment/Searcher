@@ -7,6 +7,11 @@ public partial class Form1 : Form
 {
 	private const int SearchTransitionDelay = 200;
 	private CancellationTokenSource? _cts;
+	private FileSystemWatcher _watcher;
+	/// <summary>
+	/// The result index corresponding to the shown tooltip. -1 for no item.
+	/// </summary>
+	private int _toolTipIndex = -1;
 
 	public Form1()
 	{
@@ -38,6 +43,23 @@ public partial class Form1 : Form
 		TransitionSearchButton();
 		resultsListBox.Items.Clear();
 		_cts = new CancellationTokenSource();
+		_watcher?.Dispose();
+		_watcher = new FileSystemWatcher
+		{
+			Path = startFolderTextBox.Text,
+			NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName |
+				NotifyFilters.DirectoryName
+		};
+		_watcher.Changed += Watcher_ChangedFile;
+		_watcher.Created += Watcher_CreatedFile;
+		_watcher.Deleted += Watcher_DeletedFile;
+		_watcher.Renamed += Watcher_RenamedFile;
+		_watcher.Error += Watcher_Error;
+		_watcher.IncludeSubdirectories = true;
+		foreach (string filter in filenameFilterTextBox.Text.Split(','))
+		{
+			_watcher.Filters.Add(filter.Trim());
+		}
 
 		try
 		{
@@ -57,7 +79,41 @@ public partial class Form1 : Form
 			_cts.Dispose();
 			searchCancelButton.Text = "Search";
 			searchCancelButton.Enabled = true;
+			_watcher.EnableRaisingEvents = true;
 		}
+	}
+
+	private void Watcher_Error(object sender, ErrorEventArgs e)
+	{
+		// TODO: log exception
+		Status.Text = "An error occurred while monitoring files. Live results " +
+			"may be out of date.";
+	}
+
+	private void Watcher_RenamedFile(object sender, RenamedEventArgs e)
+	{
+		throw new NotImplementedException();
+	}
+
+	private void Watcher_DeletedFile(object sender, FileSystemEventArgs e)
+	{
+		//var listItem = resultsListBox.Items.Cast<FileInfo>()
+		//	.FirstOrDefault(x => x.FullName == e.FullPath);
+		//if (listItem != null)
+		//{
+		//	listItem.ForeColor = Color.Gray;
+		//	listItem.ToolTipText = "File deleted";
+		//}
+	}
+
+	private void Watcher_CreatedFile(object sender, FileSystemEventArgs e)
+	{
+		throw new NotImplementedException();
+	}
+
+	private void Watcher_ChangedFile(object sender, FileSystemEventArgs e)
+	{
+		throw new NotImplementedException();
 	}
 
 	/// <summary>
@@ -254,6 +310,14 @@ public partial class Form1 : Form
 		if (!Directory.Exists(startFolderTextBox.Text))
 		{
 			Status.Text = $"\"{startFolderTextBox.Text}\" doesn't exist.";
+		}
+	}
+
+	private void SplitContainer1_Panel1_Resize(object sender, EventArgs e)
+	{
+		if (sender is SplitterPanel)
+		{
+			resultsListBox.Refresh();
 		}
 	}
 }

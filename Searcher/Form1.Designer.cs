@@ -32,13 +32,13 @@
 			statusStrip1 = new StatusStrip();
 			Status = new ToolStripStatusLabel();
 			splitContainer1 = new SplitContainer();
+			resultsListBox = new Controls.EnhancedListBox();
 			filenameFilterTextBox = new TextBox();
 			label5 = new Label();
 			browseButton = new Button();
 			startFolderTextBox = new TextBox();
 			label4 = new Label();
 			searchCancelButton = new Button();
-			resultsListBox = new ListBox();
 			label2 = new Label();
 			label1 = new Label();
 			searchStringTextBox = new TextBox();
@@ -76,16 +76,17 @@
 			// 
 			// splitContainer1.Panel1
 			// 
+			splitContainer1.Panel1.Controls.Add(resultsListBox);
 			splitContainer1.Panel1.Controls.Add(filenameFilterTextBox);
 			splitContainer1.Panel1.Controls.Add(label5);
 			splitContainer1.Panel1.Controls.Add(browseButton);
 			splitContainer1.Panel1.Controls.Add(startFolderTextBox);
 			splitContainer1.Panel1.Controls.Add(label4);
 			splitContainer1.Panel1.Controls.Add(searchCancelButton);
-			splitContainer1.Panel1.Controls.Add(resultsListBox);
 			splitContainer1.Panel1.Controls.Add(label2);
 			splitContainer1.Panel1.Controls.Add(label1);
 			splitContainer1.Panel1.Controls.Add(searchStringTextBox);
+			splitContainer1.Panel1.Resize += SplitContainer1_Panel1_Resize;
 			// 
 			// splitContainer1.Panel2
 			// 
@@ -93,7 +94,20 @@
 			splitContainer1.Panel2.Controls.Add(label3);
 			splitContainer1.Size = new Size(1351, 613);
 			splitContainer1.SplitterDistance = 449;
-			splitContainer1.TabIndex = 7;
+			splitContainer1.TabIndex = 0;
+			// 
+			// resultsListBox
+			// 
+			resultsListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			resultsListBox.DisplayMember = "FullName";
+			resultsListBox.DrawMode = DrawMode.OwnerDrawFixed;
+			resultsListBox.FormattingEnabled = true;
+			resultsListBox.Location = new Point(12, 335);
+			resultsListBox.Name = "resultsListBox";
+			resultsListBox.Size = new Size(429, 264);
+			resultsListBox.TabIndex = 10;
+			resultsListBox.SelectedIndexChanged += ResultsListBox_SelectedIndexChanged;
+			resultsListBox.DoubleClick += ResultsListBox_DoubleClick;
 			// 
 			// filenameFilterTextBox
 			// 
@@ -102,16 +116,16 @@
 			filenameFilterTextBox.Name = "filenameFilterTextBox";
 			filenameFilterTextBox.PlaceholderText = "E.g. \"*.txt\"";
 			filenameFilterTextBox.Size = new Size(341, 27);
-			filenameFilterTextBox.TabIndex = 9;
+			filenameFilterTextBox.TabIndex = 4;
 			// 
 			// label5
 			// 
 			label5.AutoSize = true;
 			label5.Location = new Point(12, 80);
 			label5.Name = "label5";
-			label5.Size = new Size(277, 20);
-			label5.TabIndex = 8;
-			label5.Text = "Filename filter (leave blank to search all)";
+			label5.Size = new Size(308, 20);
+			label5.TabIndex = 3;
+			label5.Text = "Filename filter (leave blank to search all files)";
 			// 
 			// browseButton
 			// 
@@ -120,7 +134,7 @@
 			browseButton.Location = new Point(359, 29);
 			browseButton.Name = "browseButton";
 			browseButton.Size = new Size(82, 33);
-			browseButton.TabIndex = 7;
+			browseButton.TabIndex = 2;
 			browseButton.Text = "Browse...";
 			browseButton.UseVisualStyleBackColor = true;
 			browseButton.Click += BrowseButton_Click;
@@ -131,7 +145,7 @@
 			startFolderTextBox.Location = new Point(12, 32);
 			startFolderTextBox.Name = "startFolderTextBox";
 			startFolderTextBox.Size = new Size(341, 27);
-			startFolderTextBox.TabIndex = 6;
+			startFolderTextBox.TabIndex = 1;
 			startFolderTextBox.Leave += StartFolderTextBox_Leave;
 			// 
 			// label4
@@ -140,7 +154,7 @@
 			label4.Location = new Point(12, 9);
 			label4.Name = "label4";
 			label4.Size = new Size(84, 20);
-			label4.TabIndex = 5;
+			label4.TabIndex = 0;
 			label4.Text = "Start folder";
 			// 
 			// searchCancelButton
@@ -150,23 +164,10 @@
 			searchCancelButton.Location = new Point(338, 265);
 			searchCancelButton.Name = "searchCancelButton";
 			searchCancelButton.Size = new Size(103, 33);
-			searchCancelButton.TabIndex = 2;
+			searchCancelButton.TabIndex = 7;
 			searchCancelButton.Text = "Search";
 			searchCancelButton.UseVisualStyleBackColor = true;
 			searchCancelButton.Click += SearchCancelButton_Click;
-			// 
-			// resultsListBox
-			// 
-			resultsListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			resultsListBox.DisplayMember = "DirectoryName";
-			resultsListBox.Font = new Font("Segoe UI", 9F);
-			resultsListBox.FormattingEnabled = true;
-			resultsListBox.Location = new Point(12, 335);
-			resultsListBox.Name = "resultsListBox";
-			resultsListBox.Size = new Size(429, 264);
-			resultsListBox.TabIndex = 4;
-			resultsListBox.SelectedIndexChanged += ResultsListBox_SelectedIndexChanged;
-			resultsListBox.DoubleClick += ResultsListBox_DoubleClick;
 			// 
 			// label2
 			// 
@@ -175,7 +176,7 @@
 			label2.Location = new Point(12, 312);
 			label2.Name = "label2";
 			label2.Size = new Size(55, 20);
-			label2.TabIndex = 3;
+			label2.TabIndex = 8;
 			label2.Text = "Results";
 			// 
 			// label1
@@ -185,7 +186,7 @@
 			label1.Location = new Point(12, 152);
 			label1.Name = "label1";
 			label1.Size = new Size(82, 20);
-			label1.TabIndex = 0;
+			label1.TabIndex = 5;
 			label1.Text = "Search text";
 			// 
 			// searchStringTextBox
@@ -197,7 +198,7 @@
 			searchStringTextBox.Name = "searchStringTextBox";
 			searchStringTextBox.PlaceholderText = "Enter your search string";
 			searchStringTextBox.Size = new Size(429, 84);
-			searchStringTextBox.TabIndex = 1;
+			searchStringTextBox.TabIndex = 6;
 			searchStringTextBox.TextChanged += SearchStringTextBox_TextChanged;
 			// 
 			// fileContentsRichTextBox
@@ -248,7 +249,6 @@
 		private StatusStrip statusStrip1;
 		private ToolStripStatusLabel Status;
 		private SplitContainer splitContainer1;
-		private ListBox resultsListBox;
 		private Label label2;
 		private Label label1;
 		private TextBox searchStringTextBox;
@@ -262,5 +262,6 @@
 		private Label label5;
 		private FolderBrowserDialog FolderBrowser;
 		private ToolTip toolTip1;
+		private Controls.EnhancedListBox resultsListBox;
 	}
 }
