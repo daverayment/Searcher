@@ -1,4 +1,4 @@
-﻿namespace Searcher.Controls
+﻿namespace EnhancedControls
 {
 	// Both panel and label controls are 'click-through', which requires
 	// overriding WndProc.
@@ -44,7 +44,7 @@
 	/// items and displays the full text in a toolTip when the item is
 	/// hovered-over.
 	/// </summary>
-	public partial class EnhancedListBox : ListBox
+	public partial class ToolTipListBox : ListBox
 	{
 		private Color _toolTipBackColor = SystemColors.Info;
 		private Color _toolTipForeColor = SystemColors.InfoText;
@@ -122,11 +122,11 @@
 		/// </summary>
 		private int _itemWidth = int.MaxValue;
 
-		public EnhancedListBox()
+		public ToolTipListBox()
 		{
 			InitializeComponent();
 			InitializeToolTipControls();
-			this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+			this.SetStyle(ControlStyles.OptimizedDoubleBuffer |ControlStyles.AllPaintingInWmPaint, true);
 			this.DrawMode = DrawMode.OwnerDrawFixed;
 		}
 

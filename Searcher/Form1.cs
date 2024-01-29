@@ -63,7 +63,8 @@ public partial class Form1 : Form
 
 		try
 		{
-			await foreach (var result in SearchFiles(searchStringTextBox.Text, _cts.Token))
+			await foreach (var result in SearchFiles(
+				searchStringTextBox.Text.Trim(), _cts.Token))
 			{
 				resultsListBox.Items.Add(result);
 			}
@@ -108,12 +109,10 @@ public partial class Form1 : Form
 
 	private void Watcher_CreatedFile(object sender, FileSystemEventArgs e)
 	{
-		throw new NotImplementedException();
 	}
 
 	private void Watcher_ChangedFile(object sender, FileSystemEventArgs e)
 	{
-		throw new NotImplementedException();
 	}
 
 	/// <summary>
@@ -140,6 +139,14 @@ public partial class Form1 : Form
 		if (startFolderTextBox.Text == "" || !Directory.Exists(startFolderTextBox.Text))
 		{
 			ShowInvalidDirectoryAlert();
+			yield break;
+		}
+
+		if (searchText == string.Empty)
+		{
+			MessageBox.Show(this, $"Please supply some text to search for.",
+				"No Search Text Given", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			searchStringTextBox.Focus();
 			yield break;
 		}
 

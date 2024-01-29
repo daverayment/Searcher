@@ -32,7 +32,7 @@
 			statusStrip1 = new StatusStrip();
 			Status = new ToolStripStatusLabel();
 			splitContainer1 = new SplitContainer();
-			resultsListBox = new Controls.EnhancedListBox();
+			resultsListBox = new EnhancedControls.ToolTipListBox();
 			filenameFilterTextBox = new TextBox();
 			label5 = new Label();
 			browseButton = new Button();
@@ -107,8 +107,11 @@
 			resultsListBox.FormattingEnabled = true;
 			resultsListBox.Location = new Point(12, 335);
 			resultsListBox.Name = "resultsListBox";
-			resultsListBox.Size = new Size(380, 204);
-			resultsListBox.TabIndex = 10;
+			resultsListBox.Size = new Size(380, 224);
+			resultsListBox.TabIndex = 12;
+			resultsListBox.ToolTipBackColor = SystemColors.Info;
+			resultsListBox.ToolTipFont = new Font("Segoe UI", 9F);
+			resultsListBox.ToolTipForeColor = SystemColors.InfoText;
 			resultsListBox.SelectedIndexChanged += ResultsListBox_SelectedIndexChanged;
 			resultsListBox.DoubleClick += ResultsListBox_DoubleClick;
 			// 
@@ -209,7 +212,7 @@
 			fileContentsRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			fileContentsRichTextBox.Location = new Point(3, 32);
 			fileContentsRichTextBox.Name = "fileContentsRichTextBox";
-			fileContentsRichTextBox.Size = new Size(819, 531);
+			fileContentsRichTextBox.Size = new Size(809, 531);
 			fileContentsRichTextBox.TabIndex = 1;
 			fileContentsRichTextBox.Text = "";
 			// 
@@ -268,6 +271,6 @@
 		private Label label5;
 		private FolderBrowserDialog FolderBrowser;
 		private ToolTip toolTip1;
-		private Controls.EnhancedListBox resultsListBox;
+		private EnhancedControls.ToolTipListBox resultsListBox;
 	}
 }

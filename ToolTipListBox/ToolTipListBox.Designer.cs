@@ -1,6 +1,6 @@
-﻿namespace Searcher.Controls
+﻿namespace EnhancedControls
 {
-	partial class EnhancedListBox
+	partial class ToolTipListBox
 	{
 		/// <summary> 
 		/// Required designer variable.
