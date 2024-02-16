@@ -12,11 +12,13 @@ public partial class Form1 : Form
 	/// The result index corresponding to the shown tooltip. -1 for no item.
 	/// </summary>
 	private int _toolTipIndex = -1;
+	private int _controlBorderWidth;
 
 	public Form1()
 	{
 		InitializeComponent();
 		RestoreSettings();
+		this.panel1.Width = splitContainer1.Panel2.Width;
 	}
 
 	/// <summary>
@@ -293,10 +295,13 @@ public partial class Form1 : Form
 
 	private void SaveFormState()
 	{
-		Settings.Default.FormSize = this.Size;
-		Settings.Default.SplitterDistance =
-			this.splitContainer1.SplitterDistance;
-		Settings.Default.Save();
+		if (this.WindowState == FormWindowState.Normal)
+		{
+			Settings.Default.FormSize = this.Size;
+			Settings.Default.SplitterDistance =
+				this.splitContainer1.SplitterDistance;
+			Settings.Default.Save();
+		}
 	}
 
 	private void SearchStringTextBox_TextChanged(object sender, EventArgs e)
@@ -356,5 +361,26 @@ public partial class Form1 : Form
 		{
 			this.splitContainer1.SplitterDistance = splitterDistance;
 		}
+	}
+
+	private void Form1_ResizeEnd(object sender, EventArgs e)
+	{
+		//this.fileContentsRichTextBox.Dock =
+		//	this.WindowState == FormWindowState.Maximized ? DockStyle.Right : DockStyle.None;
+	}
+
+	private void Form1_Resize(object sender, EventArgs e)
+	{
+		//if (this.WindowState == FormWindowState.Maximized)
+		//{
+		//	fileContentsRichTextBox.BorderStyle = BorderStyle.None;
+		//	fileContentsRichTextBox.Dock = DockStyle.Fill;
+		//}
+		//else
+		//{
+		//	fileContentsRichTextBox.BorderStyle = BorderStyle.Fixed3D;
+		//	fileContentsRichTextBox.Dock = DockStyle.None;
+		//	fileContentsRichTextBox.Width = panel1.Width - 12;
+		//}
 	}
 }

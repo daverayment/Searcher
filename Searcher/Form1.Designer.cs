@@ -42,8 +42,10 @@
 			label2 = new Label();
 			label1 = new Label();
 			searchStringTextBox = new TextBox();
+			panel1 = new Panel();
 			fileContentsRichTextBox = new RichTextBox();
 			label3 = new Label();
+			richTextBox1 = new RichTextBox();
 			FolderBrowser = new FolderBrowserDialog();
 			toolTip1 = new ToolTip(components);
 			statusStrip1.SuspendLayout();
@@ -51,6 +53,7 @@
 			splitContainer1.Panel1.SuspendLayout();
 			splitContainer1.Panel2.SuspendLayout();
 			splitContainer1.SuspendLayout();
+			panel1.SuspendLayout();
 			SuspendLayout();
 			// 
 			// statusStrip1
@@ -72,6 +75,7 @@
 			// 
 			splitContainer1.Dock = DockStyle.Fill;
 			splitContainer1.Location = new Point(0, 0);
+			splitContainer1.Margin = new Padding(0);
 			splitContainer1.Name = "splitContainer1";
 			// 
 			// splitContainer1.Panel1
@@ -91,8 +95,9 @@
 			// 
 			// splitContainer1.Panel2
 			// 
-			splitContainer1.Panel2.Controls.Add(fileContentsRichTextBox);
+			splitContainer1.Panel2.Controls.Add(panel1);
 			splitContainer1.Panel2.Controls.Add(label3);
+			splitContainer1.Panel2.Controls.Add(richTextBox1);
 			splitContainer1.Panel2MinSize = 100;
 			splitContainer1.Size = new Size(1242, 571);
 			splitContainer1.SplitterDistance = 400;
@@ -207,13 +212,25 @@
 			searchStringTextBox.TabIndex = 6;
 			searchStringTextBox.TextChanged += SearchStringTextBox_TextChanged;
 			// 
+			// panel1
+			// 
+			panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			panel1.Controls.Add(fileContentsRichTextBox);
+			panel1.Location = new Point(0, 32);
+			panel1.Margin = new Padding(0);
+			panel1.Name = "panel1";
+			panel1.Size = new Size(819, 527);
+			panel1.TabIndex = 2;
+			// 
 			// fileContentsRichTextBox
 			// 
-			fileContentsRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			fileContentsRichTextBox.Location = new Point(3, 32);
+			fileContentsRichTextBox.DetectUrls = false;
+			fileContentsRichTextBox.Dock = DockStyle.Fill;
+			fileContentsRichTextBox.Location = new Point(0, 0);
+			fileContentsRichTextBox.Margin = new Padding(0);
 			fileContentsRichTextBox.Name = "fileContentsRichTextBox";
-			fileContentsRichTextBox.Size = new Size(809, 531);
-			fileContentsRichTextBox.TabIndex = 1;
+			fileContentsRichTextBox.Size = new Size(819, 527);
+			fileContentsRichTextBox.TabIndex = 2;
 			fileContentsRichTextBox.Text = "";
 			// 
 			// label3
@@ -225,6 +242,17 @@
 			label3.Size = new Size(92, 20);
 			label3.TabIndex = 0;
 			label3.Text = "File contents";
+			// 
+			// richTextBox1
+			// 
+			richTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			richTextBox1.DetectUrls = false;
+			richTextBox1.Location = new Point(3, 312);
+			richTextBox1.Margin = new Padding(0);
+			richTextBox1.Name = "richTextBox1";
+			richTextBox1.Size = new Size(820, 227);
+			richTextBox1.TabIndex = 3;
+			richTextBox1.Text = "";
 			// 
 			// FolderBrowser
 			// 
@@ -242,6 +270,8 @@
 			Text = "Searcher";
 			FormClosing += Form1_FormClosing;
 			Load += Form1_Load;
+			ResizeEnd += Form1_ResizeEnd;
+			Resize += Form1_Resize;
 			statusStrip1.ResumeLayout(false);
 			statusStrip1.PerformLayout();
 			splitContainer1.Panel1.ResumeLayout(false);
@@ -250,6 +280,7 @@
 			splitContainer1.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
 			splitContainer1.ResumeLayout(false);
+			panel1.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -261,7 +292,6 @@
 		private Label label2;
 		private Label label1;
 		private TextBox searchStringTextBox;
-		private RichTextBox fileContentsRichTextBox;
 		private Label label3;
 		private Button searchCancelButton;
 		private Button browseButton;
@@ -272,5 +302,8 @@
 		private FolderBrowserDialog FolderBrowser;
 		private ToolTip toolTip1;
 		private EnhancedControls.ToolTipListBox resultsListBox;
+		private Panel panel1;
+		private RichTextBox fileContentsRichTextBox;
+		private RichTextBox richTextBox1;
 	}
 }
