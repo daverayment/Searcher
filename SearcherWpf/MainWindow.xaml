@@ -5,6 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SearcherWpf"
         mc:Ignorable="d"
+        xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+        ui:ThemeManager.IsThemeAware="True"
+        ui:TitleBar.ExtendViewIntoTitleBar="False"    
+        ui:WindowHelper.SystemBackdropType="Mica"
+        ui:TitleBar.IsBackButtonVisible="False"
+        ui:WindowHelper.UseModernWindowStyle="True"
         Name="SearcherMainWindow"
         Title="Searcher" Height="450" Width="800" ResizeMode="CanResizeWithGrip">
 
@@ -28,25 +34,31 @@
         <!-- Left Panel -->
         <StackPanel Grid.Column="0" Grid.Row="0" Margin="10">
             <Label Content="Start folder" Padding="0,5,5,5" />
-            <DockPanel LastChildFill="True">
-                <Button Content="Browse..." DockPanel.Dock="Right" Margin="4,0,0,0" Padding="4,2,4,2" />
+            <DockPanel
+                x:Name="StartFolderPanel"
+                LastChildFill="True">
+                <Button
+                    x:Name="BrowseForStartFolderButton"
+                    Content="Browse..."
+                    Height="{Binding ActualHeight, ElementName=StartFolder}"
+                    DockPanel.Dock="Right"
+                    Margin="4,0,0,0"
+                    Padding="6,2,6,2" Click="BrowseForStartFolderButton_Click" />
                 <TextBox
                     x:Name="StartFolder"
-                    Height="{Binding ActualHeight, ElementName=FilenameFilterWatermark}"
-                    Padding="3"
                     Text="{Binding Source={x:Static local:Settings.Default}, Path=StartFolder, Mode=OneWay}"
                     DockPanel.Dock="Left" />
             </DockPanel>
 
             <!-- Filename Filter -->
-            <Label Content="Filename filter (leave blank to search all files" Padding="0,5,5,5" />
-            <Grid>
+            <Label Content="Filename filter (leave blank to search all files" Padding="0,5,5,5" Margin="0,10,0,0" />
+            <Grid x:Name="FilenameFilterGrid">
                 <TextBox
                     x:Name="FilenameFilter"
-                    Text="{Binding Source={x:Static local:Settings.Default}, Path=FilenameFilter, Mode=OneWay}"
-                    Padding="3"
-                    Height="{Binding ActualHeight, ElementName=FilenameFilterWatermark}" VerticalAlignment="Center"/>
+                    Text="{Binding Source={x:Static local:Settings.Default}, Path=FilenameFilter, Mode=OneWay}"/>
+
                 <Label
+                    Padding="6"
                     x:Name="FilenameFilterWatermark"
                     Content='E.g. "*.txt"'
                     Foreground="Gray"
@@ -54,23 +66,30 @@
             </Grid>
 
             <!-- Search Text -->
-            <Label Content="Prompt" Padding="0,5,5,5" />
+            <Label Content="Prompt" Padding="0,5,5,5" Margin="0,10,0,0" />
 
             <!--<local:WatermarkedTextBox BorderThickness="1" WatermarkText="Bananas" />-->
 
             <Grid>
                 <TextBox
                     Name="SearchPrompt"
-                    Padding="3"
                     Text="{Binding Source={x:Static local:Settings.Default}, Path=SearchString}"
                     Height="70"
                     AcceptsReturn="True"
                     VerticalScrollBarVisibility="Auto" />
                 <Label
                     x:Name="SearchPromptWatermark"
+                    Padding="6"
                     Content="Enter your search string"
                     Foreground="Gray"
                     IsHitTestVisible="False" />
+            </Grid>
+
+            <Grid Margin="0,10,0,0">
+                <Button
+                    x:Name="SearchCancelButton"
+                    Content="Search"
+                    HorizontalAlignment="Right" />
             </Grid>
         </StackPanel>
 
@@ -82,7 +101,11 @@
             </Grid.RowDefinitions>
 
             <Label Grid.Row="0" Content="Results" Padding="0,5,5,5" />
-            <ListBox Grid.Row="1" VerticalAlignment="Stretch" d:ItemsSource="{d:SampleData ItemCount=5}" />
+            <ListBox
+                x:Name="ResultsList"
+                Grid.Row="1"
+                VerticalAlignment="Stretch"
+                d:ItemsSource="{d:SampleData ItemCount=5}" />
         </Grid>
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="2" Width="6" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
@@ -102,6 +125,7 @@
 
             <Label Grid.Row="0" Content="File contents" Padding="0,5,5,5" />
             <RichTextBox
+                x:Name="FileContents"
                 BorderThickness="{Binding Path=WindowState,
                     RelativeSource={RelativeSource AncestorType={x:Type Window}},
                     Converter={StaticResource WindowStateThicknessConverter},
@@ -113,7 +137,7 @@
 
         <!-- Status Bar -->
         <StatusBar Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2">
-            <StatusBarItem Content="Some text here!" Padding="4" />
+            <StatusBarItem x:Name="Status" Content="Some text here!" Padding="3,0,3,3" />
         </StatusBar>
     </Grid>
 </Window>
