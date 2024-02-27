@@ -25,6 +25,7 @@
 
 	<ItemGroup>
 	  <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.9.26.1" />
+	  <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
 	  <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
 	</ItemGroup>
 

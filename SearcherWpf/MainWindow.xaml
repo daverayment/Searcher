@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SearcherWpf"
         mc:Ignorable="d"
-        xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+        xmlns:viewmodels="clr-namespace:SearcherWpf.ViewModels"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel, IsDesignTimeCreatable=True}"
+        xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern" 
         ui:ThemeManager.IsThemeAware="True"
         ui:TitleBar.ExtendViewIntoTitleBar="False"    
         ui:WindowHelper.SystemBackdropType="Mica"
@@ -18,9 +20,14 @@
         <local:WindowStateThicknessConverter x:Key="WindowStateThicknessConverter" />
     </Window.Resources>
 
+    <Window.DataContext>
+        <viewmodels:MainWindowViewModel/>
+    </Window.DataContext>
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" MinWidth="200" />
+            <ColumnDefinition Width="300" MinWidth="200" />
+            <ColumnDefinition Width="6" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -39,14 +46,14 @@
                 LastChildFill="True">
                 <Button
                     x:Name="BrowseForStartFolderButton"
-                    Content="Browse..."
+                    Command="{Binding BrowseForStartFolderCommand}"
                     Height="{Binding ActualHeight, ElementName=StartFolder}"
                     DockPanel.Dock="Right"
                     Margin="4,0,0,0"
-                    Padding="6,2,6,2" Click="BrowseForStartFolderButton_Click" />
+                    Padding="6,2,6,2">Browse...</Button>
                 <TextBox
                     x:Name="StartFolder"
-                    Text="{Binding Source={x:Static local:Settings.Default}, Path=StartFolder, Mode=OneWay}"
+                    Text="{Binding StartFolder}"
                     DockPanel.Dock="Left" />
             </DockPanel>
 
@@ -73,7 +80,7 @@
             <Grid>
                 <TextBox
                     Name="SearchPrompt"
-                    Text="{Binding Source={x:Static local:Settings.Default}, Path=SearchString}"
+                    Text="{Binding SearchString}"
                     Height="70"
                     AcceptsReturn="True"
                     VerticalScrollBarVisibility="Auto" />
@@ -88,7 +95,9 @@
             <Grid Margin="0,10,0,0">
                 <Button
                     x:Name="SearchCancelButton"
-                    Content="Search"
+                    Content="{Binding SearchButtonContent}"
+                    IsEnabled="{Binding IsSearchEnabled}"
+                    Command="{Binding SearchCommand}"
                     HorizontalAlignment="Right" />
             </Grid>
         </StackPanel>
@@ -101,18 +110,31 @@
             </Grid.RowDefinitions>
 
             <Label Grid.Row="0" Content="Results" Padding="0,5,5,5" />
-            <ListBox
-                x:Name="ResultsList"
+            <ListView
+                ItemsSource="{Binding SearchResults}"
+                DisplayMemberPath="FullName"
                 Grid.Row="1"
                 VerticalAlignment="Stretch"
                 d:ItemsSource="{d:SampleData ItemCount=5}" />
+
+            <TextBlock
+                Visibility="{Binding SearchNotRunVisibility}"
+                Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">Run a search to see results here.</TextBlock>
+
+            <TextBlock
+                Visibility="{Binding NoMatchesFoundVisibility}"
+                Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">No matches found.</TextBlock>
         </Grid>
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="2" Width="6" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
 
         <!-- Right Panel -->
         <Grid
-            Grid.Column="1"
+            Grid.Column="2"
             Grid.RowSpan="2"
             Margin="{Binding Path=WindowState,
                 RelativeSource={RelativeSource AncestorType={x:Type Window}},
@@ -136,7 +158,7 @@
         </Grid>
 
         <!-- Status Bar -->
-        <StatusBar Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2">
+        <StatusBar Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
             <StatusBarItem x:Name="Status" Content="Some text here!" Padding="3,0,3,3" />
         </StatusBar>
     </Grid>
