@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace SearcherWpf;
+namespace SearcherWpf.Converters;
 
 public class TextToVisibilityConverter : IValueConverter
 {

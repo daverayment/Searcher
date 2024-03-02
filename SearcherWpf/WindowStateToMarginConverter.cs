@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace SearcherWpf;
+namespace SearcherWpf.Converters;
 
 /// <summary>
 /// Convert between two thickness values based on whether the Window is

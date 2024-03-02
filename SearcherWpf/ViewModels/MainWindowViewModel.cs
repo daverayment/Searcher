@@ -27,6 +27,8 @@ namespace SearcherWpf.ViewModels
 		private bool _isSearchEnabled = true;
 		private bool _searchNotYetRun = true;
 		private CancellationTokenSource? _cts;
+		private string _statusMessage = "Ready";
+		private bool _isWindowMaximized;
 
 		public Visibility NoMatchesFoundVisibility => (!_searchNotYetRun && _searchResults.Count == 0) ? Visibility.Visible : Visibility.Hidden;
 
@@ -67,6 +69,14 @@ namespace SearcherWpf.ViewModels
 			get => _isSearchEnabled;
 			private set => SetProperty(ref _isSearchEnabled, value);
 		}
+
+		public string StatusMessage
+		{
+			get => _statusMessage;
+			private set => SetProperty(ref _statusMessage, value);
+		}
+
+
 
 		// Commands.
 		public IRelayCommand SearchCommand { get; }
