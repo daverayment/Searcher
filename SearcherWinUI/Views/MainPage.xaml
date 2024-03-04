@@ -1,189 +1,193 @@
 ﻿<Page
-    x:Class="SearcherWinUI.Views.MainPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="using:SearcherWinUI.ViewModels" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls" d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
-    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-    mc:Ignorable="d">
+	x:Class="SearcherWinUI.Views.MainPage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="using:SearcherWinUI.ViewModels" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls" d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
+	Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+	mc:Ignorable="d">
 
-    <Grid x:Name="ContentArea">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" MinWidth="200" />
-            <ColumnDefinition Width="6" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+	<Grid x:Name="ContentArea">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="300" MinWidth="200" />
+			<ColumnDefinition Width="6" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <!-- For Results list -->
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<!-- For Results list -->
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
 
-        <!-- Left Panel -->
-        <StackPanel Grid.Column="0" Grid.Row="0" Margin="10">
-            <TextBlock
-                x:Uid="Main_StartFolderHeading"
-                Padding="0,5,5,5" />
-            <TextBox
-                x:Uid="Main_StartFolder"
-                Text="{x:Bind ViewModel.StartFolder, Mode=TwoWay}"/>
-            <Grid Margin="0,10,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+		<!-- Left Panel -->
+		<StackPanel Grid.Column="0" Grid.Row="0" Margin="10">
+			<TextBlock
+				x:Uid="Main_StartFolderHeading"
+				Padding="0,5,5,5" />
+			<TextBox
+				x:Uid="Main_StartFolder"
+				Text="{x:Bind ViewModel.StartFolder, Mode=TwoWay}"/>
+			<Grid Margin="0,10,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
 
-                <Button
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    HorizontalAlignment="Right"
-                    x:Uid="Main_BrowseForFolderButton"
-                    Command="{x:Bind ViewModel.BrowseForStartFolderCommand}"/>
-            </Grid>
-            <!-- Filename Filter -->
-            <TextBlock
-                x:Uid="Main_FilenameFilterHeading"
-                Padding="0,5,5,5"
-                Margin="0,10,0,0" />
+				<Button
+					Grid.Row="0"
+					Grid.Column="1"
+					HorizontalAlignment="Right"
+					x:Uid="Main_BrowseForFolderButton"
+					Command="{x:Bind ViewModel.BrowseForStartFolderCommand}"/>
+			</Grid>
+			<!-- Filename Filter -->
+			<TextBlock
+				x:Uid="Main_FilenameFilterHeading"
+				Padding="0,5,5,5"
+				Margin="0,10,0,0" />
 
-            <Grid x:Name="FilenameFilterGrid">
-                <TextBox
-                    x:Name="FilenameFilter"
-                    Text="{x:Bind ViewModel.FilenameFilter, Mode=TwoWay}"/>
+			<Grid x:Name="FilenameFilterGrid">
+				<TextBox
+					x:Name="FilenameFilter"
+					Text="{x:Bind ViewModel.FilenameFilter, Mode=TwoWay}"/>
 
-                <TextBlock
-                    Padding="6"
-                    x:Uid="Main_FilenameFilterWatermark"
-                    x:Name="FilenameFilterWatermark"
-                    Foreground="Gray"
-                    IsHitTestVisible="False" />
-            </Grid>
+				<TextBlock
+					Padding="6"
+					x:Uid="Main_FilenameFilterWatermark"
+					x:Name="FilenameFilterWatermark"
+					Foreground="Gray"
+					IsHitTestVisible="False" />
+			</Grid>
 
-            <!-- Search Text -->
-            <TextBlock
-                x:Uid="Main_SearchPromptHeading"
-                Padding="0,5,5,5"
-                Margin="0,10,0,0" />
+			<!-- Search Text -->
+			<TextBlock
+				x:Uid="Main_SearchPromptHeading"
+				Padding="0,5,5,5"
+				Margin="0,10,0,0" />
 
-            <!--<local:WatermarkedTextBox BorderThickness="1" WatermarkText="Bananas" />-->
+			<!--<local:WatermarkedTextBox BorderThickness="1" WatermarkText="Bananas" />-->
 
-            <Grid>
-                <TextBox
-                    Name="SearchPrompt"
-                    Text="{x:Bind ViewModel.SearchString, Mode=TwoWay}"
-                    Height="70"
-                    AcceptsReturn="True"/>
+			<Grid>
+				<TextBox
+					Name="SearchPrompt"
+					Text="{x:Bind ViewModel.SearchString, Mode=TwoWay}"
+					Height="70"
+					AcceptsReturn="True"/>
 
-                <TextBlock
-                    x:Uid="Main_SearchPromptWatermarkLabel"
-                    x:Name="SearchPromptWatermark"
-                    Padding="6"
-                    Foreground="Gray"
-                    IsHitTestVisible="False" />
-            </Grid>
+				<TextBlock
+					x:Uid="Main_SearchPromptWatermarkLabel"
+					x:Name="SearchPromptWatermark"
+					Padding="6"
+					Foreground="Gray"
+					IsHitTestVisible="False" />
+			</Grid>
 
-            <Grid Margin="0,10,0,0">
-                <Button
-                    x:Name="SearchCancelButton"
-                    Content="{x:Bind ViewModel.SearchButtonContent, Mode=OneWay}"
-                    IsEnabled="{x:Bind ViewModel.IsSearchButtonEnabled, Mode=OneWay}"
-                    Command="{x:Bind ViewModel.ExecuteSearchOrCancelCommand}"
-                    CommandParameter="{x:Bind DispatcherQueue}"
-                    HorizontalAlignment="Right" />
-            </Grid>
-        </StackPanel>
+			<Grid Margin="0,10,0,0">
+				<Button
+					x:Name="SearchCancelButton"
+					Content="{x:Bind ViewModel.SearchButtonContent, Mode=OneWay}"
+					IsEnabled="{x:Bind ViewModel.IsSearchButtonEnabled, Mode=OneWay}"
+					Command="{x:Bind ViewModel.ExecuteSearchOrCancelCommand}"
+					CommandParameter="{x:Bind DispatcherQueue}"
+					HorizontalAlignment="Right" />
+			</Grid>
+		</StackPanel>
 
-        <!-- Results -->
-        <Grid Margin="10,0,10,5" Grid.Row="1" VerticalAlignment="Stretch">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+		<!-- Results -->
+		<Grid Margin="10,0,10,5" Grid.Row="1" VerticalAlignment="Stretch">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
 
-            <TextBlock
-                x:Uid="Main_ResultsHeading"
-                Grid.Row="0"
-                Padding="0,5,5,5"/>
-            <ListView
-                ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
-                DisplayMemberPath="FullName"
-                Grid.Row="1"
-                VerticalAlignment="Stretch"/>
+			<TextBlock
+				x:Uid="Main_ResultsHeading"
+				Grid.Row="0"
+				Padding="0,5,5,5"/>
+			<ListView
+                x:Name="ResultsListView"
+				ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
+                SelectionMode="Single"
+                SelectionChanged="ResultsListView_SelectionChanged"
+				DisplayMemberPath="FullName"
+				Grid.Row="1"
+				VerticalAlignment="Stretch"/>
 
-            <TextBlock
-                x:Uid="Main_ResultsPreSearchMessage"
-                Visibility="{x:Bind ViewModel.SearchNotRunVisibility, Mode=OneWay}"
-                Grid.Row="1"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
+			<TextBlock
+				x:Uid="Main_ResultsPreSearchMessage"
+				Visibility="{x:Bind ViewModel.SearchNotRunVisibility, Mode=OneWay}"
+				Grid.Row="1"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"/>
 
-            <TextBlock
-                x:Uid="Main_ResultsNoMatchesMessage"
-                Visibility="{x:Bind ViewModel.NoMatchesFoundVisibility, Mode=OneWay}"
-                Grid.Row="1"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
-        </Grid>
+			<TextBlock
+				x:Uid="Main_ResultsNoMatchesMessage"
+				Visibility="{x:Bind ViewModel.NoMatchesFoundVisibility, Mode=OneWay}"
+				Grid.Row="1"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"/>
+		</Grid>
 
-        <!-- Content Splitter -->
-        <controls:GridSplitter
-            Grid.Column="1"
-            Grid.RowSpan="2"
-            Width="6"
-            ResizeBehavior="BasedOnAlignment"
-            ResizeDirection="Auto">
-        </controls:GridSplitter>
+		<!-- Content Splitter -->
+		<controls:GridSplitter
+			Grid.Column="1"
+			Grid.RowSpan="2"
+			Width="6"
+			ResizeBehavior="BasedOnAlignment"
+			ResizeDirection="Auto">
+		</controls:GridSplitter>
 
-        <!-- Right Panel -->
-        <Grid
-            Margin="10"
-            Grid.Column="2"
-            Grid.RowSpan="2">
-            <!--Margin="{Binding Path=WindowState,
-                RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                Converter={StaticResource WindowStateThicknessConverter},
-                ConverterParameter='10,10,10,10;10,10,0,10'}">-->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+		<!-- Right Panel -->
+		<Grid
+			Margin="10"
+			Grid.Column="2"
+			Grid.RowSpan="2">
+			<!--Margin="{Binding Path=WindowState,
+				RelativeSource={RelativeSource AncestorType={x:Type Window}},
+				Converter={StaticResource WindowStateThicknessConverter},
+				ConverterParameter='10,10,10,10;10,10,0,10'}">-->
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
 
-            <TextBlock
-                x:Uid="Main_FileContentsHeading"
-                Grid.Row="0" Text="File contents" Padding="0,5,5,5" />
-            <RichTextBlock
-                x:Name="FileContents"
-                Grid.Row="1"
-                VerticalAlignment="Stretch"/>
-            <!--BorderThickness="{Binding Path=WindowState,
-                    RelativeSource={RelativeSource AncestorType={x:Type Window}},
-                    Converter={StaticResource WindowStateThicknessConverter},
-                    ConverterParameter='1,1,1,1;1,1,0,1'}"-->
-            <!--VerticalScrollBarVisibility="Visible" />-->
-        </Grid>
+			<TextBlock
+				x:Uid="Main_FileContentsHeading"
+				Grid.Row="0" Text="File contents" Padding="0,5,5,5" />
 
-        <!-- Status Bar -->
-        <!--<StatusBar Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
-            <StatusBarItem x:Name="Status" Content="Some text here!" Padding="3,0,3,3" />
-        </StatusBar>-->
-    </Grid>
+            <RichEditBox
+				x:Name="FileContents"
+				Grid.Row="1"
+				VerticalAlignment="Stretch"/>
+			<!--BorderThickness="{Binding Path=WindowState,
+					RelativeSource={RelativeSource AncestorType={x:Type Window}},
+					Converter={StaticResource WindowStateThicknessConverter},
+					ConverterParameter='1,1,1,1;1,1,0,1'}"-->
+			<!--VerticalScrollBarVisibility="Visible" />-->
+		</Grid>
 
-    <!--<Grid x:Name="ContentArea">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="48" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+		<!-- Status Bar -->
+		<!--<StatusBar Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
+			<StatusBarItem x:Name="Status" Content="Some text here!" Padding="3,0,3,3" />
+		</StatusBar>-->
+	</Grid>
 
-        <TextBlock
-            Grid.Row="0"
-            x:Uid="Main_Title"
-            Style="{StaticResource PageTitleStyle}" />
+	<!--<Grid x:Name="ContentArea">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="48" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
 
-        <Grid Grid.Row="1">
-            
-        </Grid>
-        
-    </Grid>-->
+		<TextBlock
+			Grid.Row="0"
+			x:Uid="Main_Title"
+			Style="{StaticResource PageTitleStyle}" />
+
+		<Grid Grid.Row="1">
+			
+		</Grid>
+		
+	</Grid>-->
 </Page>
