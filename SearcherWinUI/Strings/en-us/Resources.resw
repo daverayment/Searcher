@@ -194,4 +194,10 @@
   <data name="Main_FileContentsHeading.Text" xml:space="preserve">
     <value>File contents</value>
   </data>
+  <data name="Main_ResultsBlankSearch.Text" xml:space="preserve">
+    <value>No search string provided.</value>
+  </data>
+  <data name="Main_ResultsDirectoryNotFound/Text" xml:space="preserve">
+    <value>Directory not found.</value>
+  </data>
 </root>

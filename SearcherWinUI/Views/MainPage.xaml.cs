@@ -17,59 +17,30 @@ public sealed partial class MainPage : Page
 	{
 		ViewModel = App.GetService<MainViewModel>();
 		InitializeComponent();
+
+		ViewModel.DocumentReady += DocumentReady;
 	}
 
-	private async void ResultsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+	private void DocumentReady(object? sender, EventArgs e)
 	{
-		if (ResultsListView.SelectedItem is FileInfo selectedFile)
-		{
-			try
-			{
-				FileContents.Document.SetText(TextSetOptions.ApplyRtfDocumentDefaults, string.Empty);
-				string fileContents =
-					await File.ReadAllTextAsync(selectedFile.FullName);
+		FileContents.Document.SetText(TextSetOptions.None, ViewModel.FileContents);
 
-				// Attempt to reset prior selections.
-				//FileContents.Document.Selection.SetRange(0, TextConstants.MaxUnitCount);
-				//FileContents.Document.Selection.CharacterFormat.BackgroundColor =
-				//	Microsoft.UI.Colors.Transparent;
-				//FileContents.Document.Selection.SetRange(0, 0);
-
-				FileContents.Document.SetText(TextSetOptions.None, fileContents);
-				HighlightMatches();
-			}
-			catch (Exception ex)
-			{
-				// TODO:
-			}
-		}
-	}
-
-	private void HighlightMatches()
-	{
-		string fileContents;
-		FileContents.Document.GetText(TextGetOptions.UseObjectText, out fileContents);
-		string searchString = ViewModel.SearchString;
-
-		bool found = false;
-		int index = fileContents.IndexOf(searchString, 0);
-
-		while (index >= 0)
+		bool firstMatch = true;
+		foreach (int index in ViewModel.Highlights)
 		{
 			// Highlight the found text.
 			// NB: setting a range from 0 breaks the control!
-			FileContents.Document.Selection.SetRange(index == 0 ? 1 : index, index + searchString.Length);
+			FileContents.Document.Selection.SetRange(
+				index == 0 ? 0 : index, index + ViewModel.SearchString.Length);
 			FileContents.Document.Selection.CharacterFormat.BackgroundColor =
 				Windows.UI.Color.FromArgb(255, 128, 128, 0);
 
-			if (!found)
+			if (!firstMatch)
 			{
 				// Scroll to the first instance of the found text.
 				FileContents.Document.Selection.ScrollIntoView(PointOptions.None);
-				found = true;
+				firstMatch = false;
 			}
-
-			index = fileContents.IndexOf(searchString, index + searchString.Length);
 		}
 	}
 }

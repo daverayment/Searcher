@@ -8,6 +8,11 @@ using Windows.Storage;
 using Microsoft.UI.Xaml;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
+using System.Runtime.Intrinsics.Arm;
+using SearcherWinUI.Helpers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Text;
 
 namespace SearcherWinUI.ViewModels;
 
@@ -28,11 +33,40 @@ public partial class MainViewModel : ObservableRecipient
 	[ObservableProperty]
 	private bool _isSearchButtonEnabled = true;
 
-	[ObservableProperty]
-	private Visibility _searchNotRunVisibility = Visibility.Visible;
+	private FileInfo _selectedResult;
 
 	[ObservableProperty]
-	private Visibility _noMatchesFoundVisibility = Visibility.Collapsed;
+	private string _statusMessage = "";
+
+	[ObservableProperty]
+	private bool _hasError = false;
+
+	/// <summary>
+	/// The contents of the loaded file.
+	/// </summary>
+	[ObservableProperty]
+	private string _fileContents;
+
+	/// <summary>
+	/// Start indices of the found matches in the loaded document.
+	/// </summary>
+	[ObservableProperty]
+	private List<int> _highlights = new();
+
+	/// <summary>
+	/// Set when the user selects an entry from the list of results.
+	/// </summary>
+	public FileInfo SelectedResult
+	{
+		get => _selectedResult;
+		set
+		{
+			if (SetProperty(ref _selectedResult, value))
+			{
+				OnResultSelected();
+			}
+		}
+	}
 
 	[ObservableProperty]
 	private ObservableCollection<FileInfo> _searchResults = new();
@@ -49,11 +83,14 @@ public partial class MainViewModel : ObservableRecipient
 
 	public event EventHandler<EventArgs> BlankSearchStringError = delegate { };
 
+	public event EventHandler<EventArgs> DocumentReady = delegate { };
+
 	public MainViewModel()
 	{
 		LoadSettings();
-		var resourceLoader = new ResourceLoader();
-		SearchButtonContent = resourceLoader.GetString("Main_SearchButton_Search/Text");
+
+		SearchButtonContent = "Main_SearchButton_Search/Text".GetLocalized();
+		StatusMessage = "Main_ResultsPreSearchMessage/Text".GetLocalized();
 	}
 
 	private void LoadSettings()
@@ -76,7 +113,7 @@ public partial class MainViewModel : ObservableRecipient
 		};
 		folderPicker.FileTypeFilter.Add("*");
 
-		var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+		nint hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
 		WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
 
 		var folder = await folderPicker.PickSingleFolderAsync();
@@ -109,16 +146,28 @@ public partial class MainViewModel : ObservableRecipient
 		// Otherwise begin the search by changing the Search button to Cancel.
 		TransitionSearchButton();
 
+		// Clear any error messages.
+		HasError = false;
+
 		try
 		{
-			NoMatchesFoundVisibility = Visibility.Collapsed;
-			SearchNotRunVisibility = Visibility.Collapsed;
+			StatusMessage = "";
 			SearchResults.Clear();
 
 			await foreach (var result in SearchFiles())
 			{
 				SearchResults.Add(result);
 			}
+		}
+		catch (BlankSearchStringException)
+		{
+			StatusMessage = "Main_ResultsBlankSearch/Text".GetLocalized();
+			HasError = true;
+		}
+		catch (DirectoryNotFoundException)
+		{
+			StatusMessage = "Main_ResultsDirectoryNotFound/Text".GetLocalized();
+			HasError = true;
 		}
 		catch (OperationCanceledException)
 		{
@@ -133,7 +182,7 @@ public partial class MainViewModel : ObservableRecipient
 
 			if (SearchResults.Count == 0)
 			{
-				NoMatchesFoundVisibility = Visibility.Visible;
+				StatusMessage = "Main_ResultsNoMatchesMessage/Text".GetLocalized();
 			}
 		}
 	}
@@ -143,14 +192,12 @@ public partial class MainViewModel : ObservableRecipient
 		if (StartFolder == null || StartFolder.Trim().Length == 0 ||
 			!Directory.Exists(StartFolder.Trim()))
 		{
-			OnDirectoryNotFound();
-			yield break;
+			throw new DirectoryNotFoundException();
 		}
 
 		if (SearchString.Trim().Length == 0)
 		{
-			OnBlankSearchString();
-			yield break;
+			throw new BlankSearchStringException();
 		}
 
 		if (_cts == null)
@@ -216,6 +263,45 @@ public partial class MainViewModel : ObservableRecipient
 	}
 
 	/// <summary>
+	/// Called in response to a new result selection. Loads the selected
+	/// file and searches for the requested string, updating the highlight
+	/// indices list.
+	/// </summary>
+	public void OnResultSelected()
+	{
+		if (SelectedResult is FileInfo file)
+		{
+			try
+			{
+				// NB: the RichEditBox will normalise endings to \r so we need
+				// this bit of preprocessing to ensure the search reports the
+				// correct character indices.
+				FileContents =
+					File.ReadAllText(file.FullName).ReplaceLineEndings("\r");
+
+				// Clear the list of matches and then search the file.
+				Highlights.Clear();
+
+				int index = FileContents.IndexOf(SearchString, 0,
+					StringComparison.OrdinalIgnoreCase);
+				while (index != -1)
+				{
+					Highlights.Add(index);
+					index = FileContents.IndexOf(SearchString,
+						index + SearchString.Length,
+						StringComparison.OrdinalIgnoreCase);
+				}
+
+				OnDocumentReady();
+			}
+			catch
+			{
+				// TODO: report exceptions
+			}
+		}
+	}
+
+	/// <summary>
 	/// Convert the user-supplied filename filter text into a regular expression
 	/// for matching against each of the filenames enumerated.
 	/// </summary>
@@ -247,4 +333,10 @@ public partial class MainViewModel : ObservableRecipient
 	{
 		BlankSearchStringError?.Invoke(this, EventArgs.Empty);
 	}
+
+	protected virtual void OnDocumentReady()
+	{
+		DocumentReady?.Invoke(this, EventArgs.Empty);
+	}
+
 }

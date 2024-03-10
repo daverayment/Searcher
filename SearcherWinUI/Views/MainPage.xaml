@@ -4,10 +4,19 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="using:SearcherWinUI.ViewModels" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls" d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
-	Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+    xmlns:helpers="using:SearcherWinUI.Helpers" xmlns:io="using:System.IO"
+    xmlns:customcontrols="using:SearcherWinUI.Controls"
+    Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
 	mc:Ignorable="d">
+    <Page.Resources>
+        <helpers:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+        <helpers:BooleanToStyleConverter x:Key="BooleanToStyleConverter" />
+        <Style x:Key="ResultsListItem" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+    </Page.Resources>
 
-	<Grid x:Name="ContentArea">
+    <Grid x:Name="ContentArea">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="300" MinWidth="200" />
 			<ColumnDefinition Width="6" />
@@ -25,10 +34,11 @@
 		<StackPanel Grid.Column="0" Grid.Row="0" Margin="10">
 			<TextBlock
 				x:Uid="Main_StartFolderHeading"
+                Style="{StaticResource ListTitleStyle}"
 				Padding="0,5,5,5" />
 			<TextBox
 				x:Uid="Main_StartFolder"
-				Text="{x:Bind ViewModel.StartFolder, Mode=TwoWay}"/>
+				Text="{x:Bind ViewModel.StartFolder, Mode=TwoWay}" />
 			<Grid Margin="0,10,0,0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
@@ -45,6 +55,7 @@
 			<!-- Filename Filter -->
 			<TextBlock
 				x:Uid="Main_FilenameFilterHeading"
+                Style="{StaticResource ListTitleStyle}"
 				Padding="0,5,5,5"
 				Margin="0,10,0,0" />
 
@@ -64,6 +75,7 @@
 			<!-- Search Text -->
 			<TextBlock
 				x:Uid="Main_SearchPromptHeading"
+                Style="{StaticResource ListTitleStyle}"
 				Padding="0,5,5,5"
 				Margin="0,10,0,0" />
 
@@ -104,31 +116,39 @@
 
 			<TextBlock
 				x:Uid="Main_ResultsHeading"
+                Style="{StaticResource ListTitleStyle}"
 				Grid.Row="0"
 				Padding="0,5,5,5"/>
-			<ListView
+            <ListView
                 x:Name="ResultsListView"
 				ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
+                SelectedItem="{x:Bind ViewModel.SelectedResult, Mode=TwoWay}"
                 SelectionMode="Single"
-                SelectionChanged="ResultsListView_SelectionChanged"
-				DisplayMemberPath="FullName"
+                ItemContainerStyle="{StaticResource ResultsListItem}"
 				Grid.Row="1"
-				VerticalAlignment="Stretch"/>
+				VerticalAlignment="Stretch">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="io:FileInfo">
+                        <customcontrols:PathEllipsisTextBlock Text="{x:Bind FullName}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
-			<TextBlock
-				x:Uid="Main_ResultsPreSearchMessage"
-				Visibility="{x:Bind ViewModel.SearchNotRunVisibility, Mode=OneWay}"
-				Grid.Row="1"
-				HorizontalAlignment="Center"
-				VerticalAlignment="Center"/>
-
-			<TextBlock
-				x:Uid="Main_ResultsNoMatchesMessage"
-				Visibility="{x:Bind ViewModel.NoMatchesFoundVisibility, Mode=OneWay}"
-				Grid.Row="1"
-				HorizontalAlignment="Center"
-				VerticalAlignment="Center"/>
-		</Grid>
+            <TextBlock
+                x:Name="SearchResultsStatusMessage"
+                Visibility="{
+					x:Bind ViewModel.StatusMessage,
+					Converter={StaticResource StringToVisibilityConverter},
+					Mode=OneWay}"
+                Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                Style="{x:Bind ViewModel.HasError,
+					Mode=OneWay,
+					Converter={StaticResource BooleanToStyleConverter},
+					ConverterParameter='ErrorMessageStyle,DefaultMessageStyle'}"
+                Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+        </Grid>
 
 		<!-- Content Splitter -->
 		<controls:GridSplitter
@@ -155,6 +175,7 @@
 
 			<TextBlock
 				x:Uid="Main_FileContentsHeading"
+                Style="{StaticResource ListTitleStyle}"
 				Grid.Row="0" Text="File contents" Padding="0,5,5,5" />
 
             <RichEditBox
