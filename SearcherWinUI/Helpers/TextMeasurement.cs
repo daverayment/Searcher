@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
@@ -8,44 +7,50 @@ namespace SearcherWinUI.Helpers
 {
 	public class TextMeasurement
 	{
-		public CanvasTextFormat TextFormat { get; private set; }
+		private static TextMeasurement _instance;
+		private static readonly object _lock = new();
+
 		private static readonly CanvasDevice _device = CanvasDevice.GetSharedDevice();
 
-		internal TextMeasurement(TextBlock textBlock)
+		public CanvasTextFormat TextFormat { get; private set; }
+
+		private TextMeasurement() { }
+
+		public static TextMeasurement Instance(TextBlock textBlock)
 		{
-			TextFormat = new CanvasTextFormat
+			if (_instance == null)
 			{
-				FontSize = (float)textBlock.FontSize,
-				FontFamily = textBlock.FontFamily.Source,
-				FontWeight = textBlock.FontWeight,
-				FontStyle = textBlock.FontStyle,
-				FontStretch = textBlock.FontStretch
-			};
+				lock (_lock)
+				{
+					if (_instance == null)
+					{
+						_instance = new TextMeasurement();
+						_instance.TextFormat = new CanvasTextFormat
+						{
+							FontSize = (float)textBlock.FontSize,
+							FontFamily = textBlock.FontFamily.Source,
+							FontWeight = textBlock.FontWeight,
+							FontStyle = textBlock.FontStyle,
+							FontStretch = textBlock.FontStretch
+						};
+					}
+				}
+			}
+
+			return _instance;
 		}
 
-		public double MeasureTextWidth(string text)
+		public static Size MeasureText(string text)
 		{
-			using var layout = new CanvasTextLayout(_device, text, TextFormat,
-				float.MaxValue, float.MaxValue);
-			return layout.LayoutBounds.Width;
-		}
+			if (_instance == null)
+			{
+				return Size.Empty;
+			}
 
-		public Size MeasureText(string text)
-		{
-			using var layout = new CanvasTextLayout(_device, text, TextFormat,
+			using var layout = new CanvasTextLayout(_device, text, _instance.TextFormat,
 				 float.MaxValue, float.MaxValue);
+
 			return new Size(layout.LayoutBounds.Width, layout.LayoutBounds.Height);
-		}
-	}
-
-	public class TextMeasurementFactory
-	{
-		private static readonly ConcurrentDictionary<string, TextMeasurement> _cache = new();
-
-		public static TextMeasurement Create(TextBlock textBlock)
-		{
-			string key = $"{textBlock.FontSize}-{textBlock.FontFamily.Source}-{textBlock.FontWeight.Weight}-{textBlock.FontStyle}-{textBlock.FontStretch}";
-			return _cache.GetOrAdd(key, _ => new TextMeasurement(textBlock));
 		}
 	}
 }

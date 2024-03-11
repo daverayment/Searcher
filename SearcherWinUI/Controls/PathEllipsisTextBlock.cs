@@ -4,10 +4,6 @@ using SearcherWinUI.Helpers;
 
 namespace SearcherWinUI.Controls;
 
-/// <summary>
-/// A TextBlock which automatically applies path-ellipsis trimming to its
-/// contents if the available space is too narrow to contain the full text.
-/// </summary>
 public class PathEllipsisTextBlock : Control
 {
 	/// <summary>
@@ -21,14 +17,22 @@ public class PathEllipsisTextBlock : Control
 	private Dictionary<string, double> _stringToLengthMap = new();
 
 	/// <summary>
-	/// The helper used to measure the width of the text.
+	/// Cache of full paths to their truncated 
 	/// </summary>
+	private Dictionary<string, string> _stringToTruncatedStringMap = new();
+
 	private TextMeasurement _measurement;
 
 	/// <summary>
+	/// Timer to throttle layout changes.
+	/// </summary>
+	private static DispatcherTimer _throttleTimer;
+	private static bool _timerInitialized = false;
+	private static List<PathEllipsisTextBlock> _pendingUpdates = new();
+
+	/// <summary>
 	/// The Text property receives the path to be trimmed. Changes result in
-	/// updates to the displayed TextBlock contents, but this property is
-	/// unchanged.
+	/// updates to the displayed TextBlock, but the Text is unchanged.
 	/// </summary>
 	public static readonly DependencyProperty TextProperty =
 		DependencyProperty.Register(
@@ -48,7 +52,7 @@ public class PathEllipsisTextBlock : Control
 	private string _filename;
 
 	/// <summary>
-	/// The full file path.
+	/// The full file path to be represented within this control.
 	/// </summary>
 	public string Text
 	{
@@ -56,47 +60,79 @@ public class PathEllipsisTextBlock : Control
 		set
 		{
 			SetValue(TextProperty, value);
+
+			_filename = Path.GetFileName(value);
+			_directoryPath = Path.GetDirectoryName(value) ?? "";
 		}
 	}
 
 	public PathEllipsisTextBlock()
 	{
 		this.DefaultStyleKey = typeof(PathEllipsisTextBlock);
+
+		if (!_timerInitialized )
+		{
+			_throttleTimer = new DispatcherTimer();
+			_throttleTimer.Interval = TimeSpan.FromMilliseconds(50);
+			_throttleTimer.Tick += ThrottleTimer_Tick;
+		}
+
+		this.Loaded += OnLoaded;
 		this.SizeChanged += OnSizeChanged;
+	}
+
+	private void ThrottleTimer_Tick(object? sender, object e)
+	{
+		foreach (var control in  _pendingUpdates)
+		{
+			control.ApplyPathEllipsis();
+		}
+		_pendingUpdates.Clear();
+	}
+
+	private void OnLoaded(object sender, RoutedEventArgs e)
+	{
+		ApplyPathEllipsis();
 	}
 
 	private void OnSizeChanged(object sender, RoutedEventArgs e)
 	{
 		ApplyPathEllipsis();
+		return;
+
+		if (!_pendingUpdates.Contains(this))
+		{
+			_pendingUpdates.Add(this);
+		}
+
+		if (!_throttleTimer.IsEnabled)
+		{
+			_throttleTimer.Start();
+		}
 	}
 
 	protected override void OnApplyTemplate()
 	{
 		base.OnApplyTemplate();
 		_textBlock = GetTemplateChild("PART_PathTextBox") as TextBlock;
-		_measurement = TextMeasurementFactory.Create(_textBlock);
 		ApplyPathEllipsis();
 	}
 
 	private static void OnTextChanged(DependencyObject d,
 		DependencyPropertyChangedEventArgs args)
 	{
-		if (d is PathEllipsisTextBlock control && args.NewValue is string newValue)
-		{
-			control._filename = Path.GetFileName(newValue);
-			control._directoryPath = Path.GetDirectoryName(newValue) ?? "";
-			control.ApplyPathEllipsis();
-		}
+		(d as PathEllipsisTextBlock)?.ApplyPathEllipsis();
 	}
 
 	private void ApplyPathEllipsis()
 	{
+		// TODO: adjust width if scroll bar shown?
+		double _availableWidth = this.ActualWidth;
+
 		if (_textBlock == null || string.IsNullOrEmpty(Text) || this.ActualWidth == 0)
 		{
 			return;
 		}
-
-		double _availableWidth = this.ActualWidth;
 
 		// Does the full path fit?
 		if (MeasureStringWidth(Text) <= _availableWidth)
@@ -106,22 +142,23 @@ public class PathEllipsisTextBlock : Control
 		}
 
 		// First check to see if "...\<filename>" fits.
-		string filenameAndEllipsis = "...\\" + _filename;
+		string filenameAndEllipsis = "..." + Path.DirectorySeparatorChar + _filename;
 		double filenameWidth = MeasureStringWidth(filenameAndEllipsis);
 
 		if (filenameWidth > _availableWidth)
 		{
 			// The filename suffix doesn't fit, so truncate it.
+			// TODO: are there any edge cases here, such as if nothing fits at all?
 			_textBlock.Text = TruncateText(_filename, _availableWidth);
 			return;
 		}
 
-		// The filename suffix fits, so the next step is to prepend as much
-		// of the directory portion of the path as will fit in the space left.
+		// The filename suffix fits, so the next step is to add in the directory
+		// portion of the path. Reduce the space taken up by the full filename suffix.
 		_availableWidth -= filenameWidth;
 
-		string truncatedDirectoryPath = TruncateText(_directoryPath,
-			_availableWidth, "", false);
+		string truncatedDirectoryPath = TruncateText(_directoryPath, _availableWidth,
+			"", false);
 
 		_textBlock.Text = truncatedDirectoryPath + filenameAndEllipsis;
 	}
@@ -152,27 +189,26 @@ public class PathEllipsisTextBlock : Control
 		// Subtract the pixel width of the prefix from the available width.
 		// NB: this isn't exact, because of the space between the prefix and 
 		// the rest of the text, but is a decent compromise. This is so we
-		// don't have to allocate (prefix + text) strings every iteration.
+		// don't have to allocate (prefix + text) strings each iteration.
 		if (prefix.Length > 0)
 		{
 			availableWidth -= MeasureStringWidth(prefix);
 		}
 
-		// The 'good' condition boundary where this number of characters have
-		// been tested to fit within the available width.
+		// The 'good' condition boundary where this number of characters have been
+		// tested to fit within the available width.
 		int low = 0;
-		// This is the 'bad' condition boundary, representing the first guess
-		// that is too long to fit.
+		// This is the 'bad' condition boundary, representing the first guess that
+		// is too long to fit.
 		int high = text.Length;
 
-		// Converge on the highest value of low that fits. Exits when low and
-		// high are adjacent.
+		// Converge on the highest value of low that fits. Exits when low and high
+		// are adjacent.
 		while (low < high - 1)
 		{
 			// Calculate the midpoint of low and high to test next.
 			int mid = low + (high - low) / 2;
-			// Create the candidate string depending on whether we need to
-			// remove characters from the beginning or end.
+			// Create the candidate string.
 			string candidate = truncateLeft ? text[^mid..] : text[0..mid];
 
 			// If the candidate fits within the width, move the lower bound up,
@@ -208,10 +244,41 @@ public class PathEllipsisTextBlock : Control
 			return width;
 		}
 
-		// Calculate width and add it to our map.
-		double textWidth = _measurement.MeasureTextWidth(text);
+		double textWidth =
+			TextMeasurement.Instance(this._textBlock).MeasureText(text).Width;
 		_stringToLengthMap.Add(text, textWidth);
 
 		return textWidth;
+	}
+}
+
+public static class ThrottleManager
+{
+	private static DispatcherTimer _timer;
+	private static List<Action> _actions = new();
+
+	static ThrottleManager()
+	{
+		_timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
+		_timer.Tick += (sender, e) =>
+		{
+			_timer.Stop();
+			foreach (var action in _actions)
+			{
+				action.Invoke();
+			}
+			_actions.Clear();
+		};
+	}
+
+	public static void Throttle(Action updateAction)
+	{
+		if (!_actions.Contains(updateAction))
+		{
+			_actions.Add(updateAction);
+		}
+
+		_timer.Stop();
+		_timer.Start();
 	}
 }
