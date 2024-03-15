@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -45,13 +46,42 @@ public sealed partial class MainPage : Page
 	public MainPage()
 	{
 		ViewModel = App.GetService<MainViewModel>();
-		//ViewModel.DispatcherQueue = this.DispatcherQueue;
 
 		InitializeComponent();
 
 		this.SizeChanged += MainPage_SizeChanged;
 
 		ViewModel.DocumentReady += DocumentReady;
+
+		SetupWatermarks();
+		this.Loaded += (_, _) => SetWatermarkVisibility();
+	}
+
+	/// <summary>
+	/// Wire up watermark visibility events.
+	/// </summary>
+	private void SetupWatermarks()
+	{
+		FilenameFilter.GotFocus += (_, _) =>
+			FilenameFilterWatermark.Visibility = Visibility.Collapsed;
+		FilenameFilter.LostFocus += (sender, e) => SetWatermarkVisibility();
+
+		SearchPrompt.GotFocus += (_, _) =>
+			SearchPromptWatermark.Visibility = Visibility.Collapsed;
+		SearchPrompt.LostFocus += (_, _) => SetWatermarkVisibility();
+	}
+
+	/// <summary>
+	/// Show/hide watermarks when the associated controls gain or lose focus.
+	/// </summary>
+	private void SetWatermarkVisibility()
+	{
+		FilenameFilterWatermark.Visibility =
+			string.IsNullOrEmpty(FilenameFilter.Text) ?
+				Visibility.Visible : Visibility.Collapsed;
+		SearchPromptWatermark.Visibility =
+			string.IsNullOrEmpty(SearchPrompt.Text) ?
+				Visibility.Visible : Visibility.Collapsed;
 	}
 
 	private static bool IsWindowMaximized()
@@ -93,6 +123,16 @@ public sealed partial class MainPage : Page
 				FileContents.Document.Selection.ScrollIntoView(PointOptions.None);
 				firstMatch = false;
 			}
+		}
+	}
+
+	private async void ResultsListView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+	{
+		if (ViewModel.SelectedResult != null)
+		{
+			string argument = $"/select, \"{ViewModel.SelectedResult.FullName}\"";
+
+			Process.Start("explorer.exe", argument);
 		}
 	}
 }
