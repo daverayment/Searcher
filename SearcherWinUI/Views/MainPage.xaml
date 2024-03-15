@@ -11,6 +11,7 @@
     <Page.Resources>
         <helpers:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         <helpers:BooleanToStyleConverter x:Key="BooleanToStyleConverter" />
+        <helpers:WindowStateThicknessConverter x:Key="WindowStateThicknessConverter" />
         <Style x:Key="ResultsListItem" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
             <Setter Property="FontSize" Value="12" />
         </Style>
@@ -102,10 +103,9 @@
 					Content="{x:Bind ViewModel.SearchButtonContent, Mode=OneWay}"
 					IsEnabled="{x:Bind ViewModel.IsSearchButtonEnabled, Mode=OneWay}"
 					Command="{x:Bind ViewModel.ExecuteSearchOrCancelCommand}"
-					CommandParameter="{x:Bind DispatcherQueue}"
 					HorizontalAlignment="Right" />
 			</Grid>
-		</StackPanel>
+        </StackPanel>
 
 		<!-- Results -->
 		<Grid Margin="10,0,10,5" Grid.Row="1" VerticalAlignment="Stretch">
@@ -161,13 +161,12 @@
 
 		<!-- Right Panel -->
 		<Grid
-			Margin="10"
 			Grid.Column="2"
-			Grid.RowSpan="2">
-			<!--Margin="{Binding Path=WindowState,
-				RelativeSource={RelativeSource AncestorType={x:Type Window}},
+			Grid.RowSpan="2"
+			Margin="{x:Bind ViewModel.CalculatedWindowState,
+				Mode=OneWay,
 				Converter={StaticResource WindowStateThicknessConverter},
-				ConverterParameter='10,10,10,10;10,10,0,10'}">-->
+				ConverterParameter='10,10,10,10;10,10,0,10'}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
@@ -181,12 +180,16 @@
             <RichEditBox
 				x:Name="FileContents"
 				Grid.Row="1"
-				VerticalAlignment="Stretch"/>
-			<!--BorderThickness="{Binding Path=WindowState,
-					RelativeSource={RelativeSource AncestorType={x:Type Window}},
+				VerticalAlignment="Stretch"
+				BorderThickness="{x:Bind ViewModel.CalculatedWindowState,
+					Mode=OneWay,
 					Converter={StaticResource WindowStateThicknessConverter},
-					ConverterParameter='1,1,1,1;1,1,0,1'}"-->
-			<!--VerticalScrollBarVisibility="Visible" />-->
+					ConverterParameter='1,1,1,1;1,1,0,1'}"
+                Margin="{x:Bind ViewModel.CalculatedWindowState,
+					Mode=OneWay,
+					Converter={StaticResource WindowStateThicknessConverter},
+					ConverterParameter='1,1,1,1;1,1,-2,1'}"
+				ScrollViewer.VerticalScrollBarVisibility="Visible" />
 		</Grid>
 
 		<!-- Status Bar -->

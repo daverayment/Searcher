@@ -1,18 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Dispatching;
-using Microsoft.Windows.ApplicationModel.Resources;
 using Windows.Storage.Pickers;
 using Windows.Storage;
-using Microsoft.UI.Xaml;
-using System.Windows.Input;
 using System.Text.RegularExpressions;
-using System.Runtime.Intrinsics.Arm;
 using SearcherWinUI.Helpers;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Text;
+using System.Diagnostics;
 
 namespace SearcherWinUI.ViewModels;
 
@@ -41,6 +34,9 @@ public partial class MainViewModel : ObservableRecipient
 	[ObservableProperty]
 	private bool _hasError = false;
 
+	[ObservableProperty]
+	private bool _isMaximized = false;
+
 	/// <summary>
 	/// The contents of the loaded file.
 	/// </summary>
@@ -52,6 +48,14 @@ public partial class MainViewModel : ObservableRecipient
 	/// </summary>
 	[ObservableProperty]
 	private List<int> _highlights = new();
+
+	[ObservableProperty]
+	private WindowState _calculatedWindowState = WindowState.Normal;
+
+	/// <summary>
+	/// Tracks whether the search is operational.
+	/// </summary>
+	private bool _isSearchActive = false;
 
 	/// <summary>
 	/// Set when the user selects an entry from the list of results.
@@ -93,6 +97,9 @@ public partial class MainViewModel : ObservableRecipient
 		StatusMessage = "Main_ResultsPreSearchMessage/Text".GetLocalized();
 	}
 
+	/// <summary>
+	/// Restore settings saved from previous successful runs.
+	/// </summary>
 	private void LoadSettings()
 	{
 		var localSettings = ApplicationData.Current.LocalSettings;
@@ -134,57 +141,67 @@ public partial class MainViewModel : ObservableRecipient
 	[RelayCommand]
 	private async void ExecuteSearchOrCancel()
 	{
-		if (IsCancelButtonShown())
+		if (_isSearchActive)
 		{
 			// Cancel a running search operation.
 			_cts?.Cancel();
-			return;
 		}
-
-		_cts = new CancellationTokenSource();
-
-		// Otherwise begin the search by changing the Search button to Cancel.
-		TransitionSearchButton();
-
-		// Clear any error messages.
-		HasError = false;
-
-		try
+		else
 		{
-			StatusMessage = "";
-			SearchResults.Clear();
+			_cts = new CancellationTokenSource();
+			_isSearchActive = true;
 
-			await foreach (var result in SearchFiles())
+			// Clear any error messages.
+			HasError = false;
+
+			TransitionSearchButton();
+
+			try
 			{
-				SearchResults.Add(result);
+				StatusMessage = "";
+				SearchResults.Clear();
+
+				await foreach (var result in SearchFiles())
+				{
+					SearchResults.Add(result);
+				}
+			}
+			catch (OperationCanceledException)
+			{
+				// TODO: update UI. Keep existing results.
+				Debug.WriteLine("Cancelled!");
+			}
+			catch (BlankSearchStringException)
+			{
+				StatusMessage = "Main_ResultsBlankSearch/Text".GetLocalized();
+				HasError = true;
+			}
+			catch (DirectoryNotFoundException)
+			{
+				StatusMessage = "Main_ResultsDirectoryNotFound/Text".GetLocalized();
+				HasError = true;
+			}
+			finally
+			{
+				_cts.Dispose();
+				_cts = null;
+
+				_isSearchActive = false;
+				UpdateSearchButtonUI();
+
+				if (SearchResults.Count == 0)
+				{
+					StatusMessage = "Main_ResultsNoMatchesMessage/Text".GetLocalized();
+				}
 			}
 		}
-		catch (BlankSearchStringException)
-		{
-			StatusMessage = "Main_ResultsBlankSearch/Text".GetLocalized();
-			HasError = true;
-		}
-		catch (DirectoryNotFoundException)
-		{
-			StatusMessage = "Main_ResultsDirectoryNotFound/Text".GetLocalized();
-			HasError = true;
-		}
-		catch (OperationCanceledException)
-		{
-			// TODO: report cancelled search.
-		}
-		finally
-		{
-			_cts.Dispose();
-			var loader = new ResourceLoader();
-			SearchButtonContent = loader.GetString("Main_SearchButton_Search/Text");
-			IsSearchButtonEnabled = true;
+	}
 
-			if (SearchResults.Count == 0)
-			{
-				StatusMessage = "Main_ResultsNoMatchesMessage/Text".GetLocalized();
-			}
-		}
+	private async void TransitionSearchButton()
+	{
+		IsSearchButtonEnabled = false;
+		await Task.Delay(SearchTransitionDelayInMs);
+		UpdateSearchButtonUI();
 	}
 
 	private async IAsyncEnumerable<FileInfo> SearchFiles()
@@ -240,26 +257,12 @@ public partial class MainViewModel : ObservableRecipient
 		}
 	}
 
-	/// <summary>
-	/// Transition the Search button to a Cancel button after a brief delay.
-	/// </summary>
-	private async void TransitionSearchButton()
+	private void UpdateSearchButtonUI()
 	{
-		IsSearchButtonEnabled = false;
-		await Task.Delay(SearchTransitionDelayInMs);
-		if (_cts != null && !_cts.IsCancellationRequested)
-		{
-			var loader = new ResourceLoader();
-			SearchButtonContent = loader.GetString("Main_SearchButton_Cancel/Text");
-			IsSearchButtonEnabled = true;
-		}
-	}
-
-	private bool IsCancelButtonShown()
-	{
-		var resourceLoader = new ResourceLoader();
-		return SearchButtonContent ==
-			resourceLoader.GetString("Main_SearchButton_Cancel/Text");
+		SearchButtonContent = _isSearchActive ?
+			"Main_SearchButton_Cancel/Text".GetLocalized() :
+			"Main_SearchButton_Search/Text".GetLocalized();
+		IsSearchButtonEnabled = true;
 	}
 
 	/// <summary>

@@ -18,7 +18,7 @@ public class PathEllipsisTextBlock : Control
 	/// <summary>
 	/// Cache of strings to their pixel widths.
 	/// </summary>
-	private Dictionary<string, double> _stringToLengthMap = new();
+	private readonly Dictionary<string, double> _stringToLengthMap = new();
 
 	/// <summary>
 	/// The helper used to measure the width of the text.
@@ -74,8 +74,11 @@ public class PathEllipsisTextBlock : Control
 	{
 		base.OnApplyTemplate();
 		_textBlock = GetTemplateChild("PART_PathTextBox") as TextBlock;
-		_measurement = TextMeasurementFactory.Create(_textBlock);
-		ApplyPathEllipsis();
+		if (_textBlock != null )
+		{
+			_measurement = TextMeasurementFactory.Create(_textBlock);
+			ApplyPathEllipsis();
+		}
 	}
 
 	private static void OnTextChanged(DependencyObject d,
@@ -152,7 +155,7 @@ public class PathEllipsisTextBlock : Control
 		// Subtract the pixel width of the prefix from the available width.
 		// NB: this isn't exact, because of the space between the prefix and 
 		// the rest of the text, but is a decent compromise. This is so we
-		// don't have to allocate (prefix + text) strings every iteration.
+		// don't have to concatenate prefix and text strings every iteration.
 		if (prefix.Length > 0)
 		{
 			availableWidth -= MeasureStringWidth(prefix);
