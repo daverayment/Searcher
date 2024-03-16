@@ -5,7 +5,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="using:SearcherWinUI.ViewModels" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls" d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
     xmlns:helpers="using:SearcherWinUI.Helpers" xmlns:io="using:System.IO"
-    xmlns:customcontrols="using:SearcherWinUI.Controls"
+    xmlns:customcontrols="using:DaveRayment.Controls"
     Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
 	mc:Ignorable="d">
     <Page.Resources>

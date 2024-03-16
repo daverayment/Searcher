@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearcherWinUI", "SearcherWi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearcherWinUI.Core", "SearcherWinUI.Core\SearcherWinUI.Core.csproj", "{8DA31AC7-3AEB-4A0A-AFDE-2E85184E9BA6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathEllipsisTextBlock", "PathEllipsisTextBlock\PathEllipsisTextBlock.csproj", "{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -118,6 +120,22 @@ Global
 		{8DA31AC7-3AEB-4A0A-AFDE-2E85184E9BA6}.Release|x64.Build.0 = Release|x64
 		{8DA31AC7-3AEB-4A0A-AFDE-2E85184E9BA6}.Release|x86.ActiveCfg = Release|x86
 		{8DA31AC7-3AEB-4A0A-AFDE-2E85184E9BA6}.Release|x86.Build.0 = Release|x86
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Debug|arm64.Build.0 = Debug|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Debug|x64.Build.0 = Debug|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Debug|x86.Build.0 = Debug|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Release|arm64.ActiveCfg = Release|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Release|arm64.Build.0 = Release|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Release|x64.ActiveCfg = Release|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Release|x64.Build.0 = Release|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Release|x86.ActiveCfg = Release|Any CPU
+		{FA2F79FF-D35A-4A8E-8BF9-2C3CEC8BB567}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

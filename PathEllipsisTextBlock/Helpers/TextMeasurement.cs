@@ -4,7 +4,7 @@ using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
 
-namespace SearcherWinUI.Helpers
+namespace DaveRayment.Controls.Helpers
 {
 	public class TextMeasurement
 	{

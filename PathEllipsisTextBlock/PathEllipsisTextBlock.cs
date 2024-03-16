@@ -1,8 +1,9 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using SearcherWinUI.Helpers;
+using System.Collections.Generic;
+using System.IO;
 
-namespace SearcherWinUI.Controls;
+namespace DaveRayment.Controls;
 
 /// <summary>
 /// A TextBlock which automatically applies path-ellipsis trimming to its
@@ -13,7 +14,7 @@ public class PathEllipsisTextBlock : Control
 	/// <summary>
 	/// The wrapped TextBlock control for the possibly-truncated path.
 	/// </summary>
-	private TextBlock? _textBlock;
+	private TextBlock _textBlock;
 
 	/// <summary>
 	/// Cache of strings to their pixel widths.
@@ -23,7 +24,7 @@ public class PathEllipsisTextBlock : Control
 	/// <summary>
 	/// The helper used to measure the width of the text.
 	/// </summary>
-	private TextMeasurement _measurement;
+	private Helpers.TextMeasurement _measurement;
 
 	/// <summary>
 	/// The Text property receives the path to be trimmed. Changes result in
@@ -53,10 +54,7 @@ public class PathEllipsisTextBlock : Control
 	public string Text
 	{
 		get => (string)GetValue(TextProperty);
-		set
-		{
-			SetValue(TextProperty, value);
-		}
+		set => SetValue(TextProperty, value);
 	}
 
 	public PathEllipsisTextBlock()
@@ -74,9 +72,9 @@ public class PathEllipsisTextBlock : Control
 	{
 		base.OnApplyTemplate();
 		_textBlock = GetTemplateChild("PART_PathTextBox") as TextBlock;
-		if (_textBlock != null )
+		if (_textBlock != null)
 		{
-			_measurement = TextMeasurementFactory.Create(_textBlock);
+			_measurement = Helpers.TextMeasurementFactory.Create(_textBlock);
 			ApplyPathEllipsis();
 		}
 	}
