@@ -1,6 +1,5 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System.Collections.Generic;
 using System.IO;
 
 namespace DaveRayment.Controls;
@@ -15,11 +14,6 @@ public class PathEllipsisTextBlock : Control
 	/// The wrapped TextBlock control for the possibly-truncated path.
 	/// </summary>
 	private TextBlock _textBlock;
-
-	/// <summary>
-	/// Cache of strings to their pixel widths.
-	/// </summary>
-	private readonly Dictionary<string, double> _stringToLengthMap = new();
 
 	/// <summary>
 	/// The helper used to measure the width of the text.
@@ -193,26 +187,10 @@ public class PathEllipsisTextBlock : Control
 	}
 
 	/// <summary>
-	/// Measure the length of a piece of text. Uses a cache to retrieve
-	/// previously-calculated widths.
+	/// Measure the length of a piece of text.
 	/// </summary>
 	/// <param name="text">The text to measure.</param>
 	/// <returns>The width of the text as would be rendered in the control.
 	/// </returns>
-	private double MeasureStringWidth(string text)
-	{
-		// TODO: clear cache if any font properties change.
-		// TODO: should we limit the number of entries?
-		// TODO: use hash instead of the full string?
-		if (_stringToLengthMap.TryGetValue(text, out double width))
-		{
-			return width;
-		}
-
-		// Calculate width and add it to our map.
-		double textWidth = _measurement.MeasureTextWidth(text);
-		_stringToLengthMap.Add(text, textWidth);
-
-		return textWidth;
-	}
+	private double MeasureStringWidth(string text) => _measurement.MeasureTextWidth(text);
 }
